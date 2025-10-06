@@ -1,0 +1,191 @@
+"use client";
+
+import Link from "next/link";
+import { ShoppingCart } from "lucide-react";
+import { useCart } from "@/app/context/CartContext";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import "./header.css";
+import { IoIosSearch, IoMdArrowDropdown, IoMdMenu } from "react-icons/io";
+import { LiaTimesSolid } from "react-icons/lia";
+
+export default function Header() {
+  const [toggle, setToggle] = useState(false); // mobile menu
+  const { totalItems } = useCart();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [open, setOpen] = useState(false); // desktop dropdown
+  const [mobileDropdown, setMobileDropdown] = useState(false); // mobile dropdown
+  const [mounted, setMounted] = useState(false); // hydration guard
+
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // close menus when route changes
+  useEffect(() => {
+    setToggle(false);
+    setMobileDropdown(false);
+    setOpen(false);
+  }, [pathname]);
+
+  const handleToggle = () => {
+    setToggle((prev) => !prev);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && searchTerm.trim() !== "") {
+      e.preventDefault();
+      router.push(`/search?q=${encodeURIComponent(searchTerm)}`);
+    }
+  };
+
+  return (
+    <>
+      <header className="header-holder">
+        <div className="header-wrapper">
+          {/* Logo */}
+          <div className="logo-container">
+            <Link href="/">
+              <img src="/logo.png" alt="Logo" className="header-logo" />
+            </Link>
+          </div>
+
+          {/* Desktop Nav */}
+          <nav className="link-holders">
+            <Link href="/" className="Link-nav">
+              Home
+            </Link>
+            <Link href="/" className="Link-nav">
+              About
+            </Link>
+
+            {/* Categories Dropdown */}
+            <div
+              className={`dropdown ${open ? "open" : ""}`}
+              onMouseLeave={() => setOpen(false)}
+            >
+              <button
+                className="dropdown-toggle"
+                onClick={() => setOpen((prev) => !prev)}
+              >
+                Categories{" "}
+                <IoMdArrowDropdown
+                  className={open ? "rotate" : ""}
+                  size={22}
+                />
+              </button>
+
+              <ul className="dropdown-menu">
+                <li>
+                  <Link href="/">Whiskey</Link>
+                </li>
+                <li>
+                  <Link href="/">Wine</Link>
+                </li>
+                <li>
+                  <Link href="/">Champagne</Link>
+                </li>
+              </ul>
+            </div>
+
+            <Link href="/" className="Link-nav">
+              Contact Us
+            </Link>
+          </nav>
+
+          {/* Search Box */}
+          <div className="search-container">
+            <IoIosSearch style={{ opacity: "0.5", fontSize: "25px" }} />
+            <input
+              className="input-capture"
+              placeholder="Search for drinks"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+          </div>
+          <Link href="/cart" className="cart-icon1">
+                <ShoppingCart /><span className="cart-badge">
+                {totalItems}
+              </span>
+          </Link>
+
+          {/* Mobile menu toggle */}
+          <div className="mobile-menue" onClick={handleToggle}>
+            {!toggle && <IoMdMenu size={40} />}
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Side Menu */}
+      <div className={`side-menu ${toggle ? "open" : ""}`}>
+        <div className="mobile-show" onClick={handleToggle}>
+          <LiaTimesSolid size={35} color="white"/>
+        </div>
+
+        <div className="top-item-holder" onClick={handleToggle}>
+          <Link href="/cart" className="cart-icon">
+            <ShoppingCart color="white"/>
+            {/* Only show count after mount to avoid mismatch */}
+            {mounted && totalItems > 0 && (
+              <span className="cart-badge">
+                {totalItems}
+              </span>
+            )}
+          </Link>
+        </div>
+
+        <nav className="mobile-link-holder">
+          <div className="search-contained">
+            <IoIosSearch style={{ opacity: "0.6", fontSize: "25px", marginLeft:'10px' }} />
+            <input className="input-capture" placeholder="Search for drinks" />
+          </div>
+
+          <Link href="/" onClick={handleToggle} className="mobile-link-nav">
+            Home
+          </Link>
+          <Link href="/" onClick={handleToggle}  className="mobile-link-nav">
+            About
+          </Link>
+
+          {/* Mobile Dropdown */}
+          <div className="mobile-dropdown">
+            <button
+              className="mobile-dropdown-toggle"
+              onClick={() => setMobileDropdown((prev) => !prev)}
+            >
+              Categories{" "}
+              <IoMdArrowDropdown
+                className={mobileDropdown ? "rotate" : ""}
+                size={22}
+              />
+            </button>
+            {mobileDropdown && (
+              <>
+                <Link href="/" onClick={handleToggle} className="mobile-link-nav">
+                  Whiskey
+                </Link>
+                <Link href="/" onClick={handleToggle}  className="mobile-link-nav">
+                  Wine
+                </Link>
+                 <Link href="/" onClick={handleToggle} className="mobile-link-nav">
+                  Whiskey
+                </Link>
+                <Link href="/" onClick={handleToggle}  className="mobile-link-nav">
+                  Wine
+                </Link>
+              </>
+            )}
+          </div>
+
+          <Link href="/" onClick={handleToggle} className="mobile-link-nav">
+            Contact Us
+          </Link>
+        </nav>
+      </div>
+    </>
+  );
+}

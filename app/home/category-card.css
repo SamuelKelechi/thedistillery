@@ -1,0 +1,40 @@
+.categoryCard {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: left;
+  padding: 12px;
+}
+.categoryCard_img {
+  width: 100%;
+  height: 290px;
+  background: antiquewhite;
+  border-radius: 20px;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.categoryCard_text {
+  font-family: sans-serif;
+}
+
+.categoryCard_btn {
+  width: max-content;
+  border-radius: 20px;
+  border: 1px solid #063a47;
+  outline: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  color: #063a47;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  font-family: sans-serif;
+  font-weight: 600;
+}
+
+/* .categoryCard_btn{
+  
+} */
