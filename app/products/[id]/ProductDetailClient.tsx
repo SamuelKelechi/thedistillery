@@ -7,16 +7,16 @@ interface ProductDetailClientProps {
   product: {
     id: string;
     name: string;
-    description: string;
+    description: string | null;
     image1: string | null;
     image2: string | null;
     image3: string | null;
     priceRange: string | null;
-    bottlePrice: number;
-    cartonPrice: number;
-    sku: string;
-    bottlesPerCarton: number;
-    alcVol: string,
+    bottlePrice: number | null;
+    cartonPrice: number | null;
+    sku: string | null;
+    bottlesPerCarton: number | null;
+    alcVol: string | null;
   };
 }
 
@@ -34,13 +34,16 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
       id: product.id,
       name: product.name,
       price:
-      purchaseType === "carton" ? product.cartonPrice : product.bottlePrice,
+        purchaseType === "carton"
+          ? product.cartonPrice ?? 0
+          : product.bottlePrice ?? 0,
       quantity: 1,
-      sku: product.sku,
+      sku: product.sku ?? "",
       image1: product.image1 ?? "",
       purchaseType,
-      bottlesPerCarton: purchaseType === "carton" ? product.bottlesPerCarton : 1,
-      alcVol: product.alcVol,
+      bottlesPerCarton:
+        purchaseType === "carton" ? product.bottlesPerCarton ?? 1 : 1,
+      alcVol: product.alcVol ?? "",
     });
 
     alert("✅ Added to cart!");
@@ -49,7 +52,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold">{product.name}</h1>
-      <p className="mt-2">{product.description}</p>
+      <p className="mt-2">{product.description ?? "No description available."}</p>
 
       {/* Purchase Option */}
       <div className="mt-4">
@@ -60,19 +63,19 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
         >
           <option value="">- Select Option -</option>
           <option value="bottle">
-            Bottle - ₦{product.bottlePrice.toLocaleString()}
+            Bottle - ₦{(product.bottlePrice ?? 0).toLocaleString()}
           </option>
           <option value="carton">
-            Carton - ₦{product.cartonPrice.toLocaleString()}
+            Carton - ₦{(product.cartonPrice ?? 0).toLocaleString()}
           </option>
         </select>
       </div>
-       <p className="mt-2 text-sm text-gray-600">
+
+      <p className="mt-2 text-sm text-gray-600">
         {purchaseType === "carton"
-          ? `${product.bottlesPerCarton} bottles per carton`
+          ? `${product.bottlesPerCarton ?? 1} bottles per carton`
           : "1 bottle"}
       </p>
-
 
       {/* Add to Cart */}
       <button
