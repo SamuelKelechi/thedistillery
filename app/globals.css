@@ -4,6 +4,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: Abygaer, sans-serif;
 }
 
 html {
@@ -12,7 +13,13 @@ html {
 }
 
 body {
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: "Josefin Sans" sans-serif;
+}
+
+.home-main-holder{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 
@@ -596,4 +603,96 @@ body {
   .summary-card {
     padding: 16px;
   }
+}
+
+/* Cart and WhatsApp Styling */
+/* === Floating Icon Styles === */
+.floating-icons {
+  position: fixed;
+  bottom: 80px;
+  width: 100%;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  animation: fadeInIcons 0.8s ease-in-out;
+}
+
+.cart-icon,
+.whatsapp-icon {
+  position: absolute;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  color: white;
+  font-size: 28px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  animation: popIn 0.6s ease forwards;
+}
+
+/* Position each icon */
+.cart-icon {
+  left: 10px;
+  background: orange;
+  animation-delay: 0.2s;
+}
+
+.whatsapp-icon {
+  right: 10px;
+  background: #25D366;
+  animation-delay: 0.4s;
+}
+
+/* Hover bounce effect */
+.cart-icon:hover,
+.whatsapp-icon:hover {
+  transform: scale(1.1) translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* === Keyframes for smooth entry === */
+@keyframes popIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  80% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeInIcons {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+  .cart-icon,
+  .whatsapp-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 22px;
+  }
+  .cart-icon {
+  left: 10px;
+}
+.whatsapp-icon {
+  right: 10px;
+}
 }

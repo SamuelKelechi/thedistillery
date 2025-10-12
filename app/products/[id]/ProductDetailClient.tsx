@@ -78,7 +78,6 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
           : "1 bottle"}
       </p>
 
-
       {/* Add to Cart */}
       <button
         onClick={handleAddToCart}
