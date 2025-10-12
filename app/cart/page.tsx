@@ -160,7 +160,7 @@ export default function CartPage() {
             </div>
 
             <div className="cart-summary-row">
-              <span className="cart-summary-label">SUBTOTAL TO: ₦{totalPrice.toLocaleString()}</span>
+              <span className="cart-summary-label"><b>SUBTOTAL:</b> ₦{totalPrice.toLocaleString()}</span>
               <span className="cart-summary-value"></span>
             </div>
 
@@ -170,7 +170,7 @@ export default function CartPage() {
             </div>
            
             <div className="cart-summary-row cart-summary-total">
-              <span className="cart-summary-label">TOTAL PRICE: ₦{totalPrice.toLocaleString()}</span>
+              <span className="cart-summary-label"><b>TOTAL PRICE:</b> ₦{totalPrice.toLocaleString()}</span>
               <span className="cart-summary-value"></span>
             </div>
             <button 

@@ -1,4 +1,4 @@
-import "../styles/recommended-card.css";
+import "./recommended-card.css";
 
 const RecommendedCard = () => {
   return (

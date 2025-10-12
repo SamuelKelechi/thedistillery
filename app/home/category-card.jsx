@@ -1,4 +1,4 @@
-import "../styles/category-card.css";
+import "./category-card.css";
 import { FaCircleArrowRight } from "react-icons/fa6";
 
 const CategoryCard = () => {

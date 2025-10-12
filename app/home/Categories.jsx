@@ -1,4 +1,4 @@
-import "../styles/categories.css";
+import "./categories.css";
 import CategoryCard from "./category-card";
 
 const Categories = () => {
