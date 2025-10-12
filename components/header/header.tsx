@@ -59,7 +59,7 @@ export default function Header() {
               Home
             </Link>
             <Link href="/" className="Link-nav">
-              About
+              About Us
             </Link>
 
             {/* Categories Dropdown */}
@@ -88,6 +88,27 @@ export default function Header() {
                 <li>
                   <Link href="/">Champagne</Link>
                 </li>
+                <li>
+                  <Link href="/">Spirit</Link>
+                </li>
+                <li>
+                  <Link href="/">Vodka</Link>
+                </li>
+                <li>
+                  <Link href="/">Brandy</Link>
+                </li>
+                <li>
+                  <Link href="/">Gin</Link>
+                </li>
+                <li>
+                  <Link href="/">Cream</Link>
+                </li>
+                <li>
+                  <Link href="/">Tequila</Link>
+                </li>
+                <li>
+                  <Link href="/">Cognac</Link>
+                </li>
               </ul>
             </div>
 
@@ -98,7 +119,7 @@ export default function Header() {
 
           {/* Search Box */}
           <div className="search-container">
-            <IoIosSearch style={{ opacity: "0.5", fontSize: "25px" }} />
+            <IoIosSearch style={{ opacity: "0.5", fontSize: "25px", marginRight: "-5px", zIndex: "100" }} />
             <input
               className="input-capture"
               placeholder="Search for drinks"
@@ -107,11 +128,6 @@ export default function Header() {
               onKeyDown={handleKeyDown}
             />
           </div>
-          <Link href="/cart" className="cart-icon1">
-                <ShoppingCart /><span className="cart-badge">
-                {totalItems}
-              </span>
-          </Link>
 
           {/* Mobile menu toggle */}
           <div className="mobile-menue" onClick={handleToggle}>
@@ -127,7 +143,7 @@ export default function Header() {
         </div>
 
         <div className="top-item-holder" onClick={handleToggle}>
-          <Link href="/cart" className="cart-icon">
+          <Link href="/cart" className="cart-mobile-icon">
             <ShoppingCart color="white"/>
             {/* Only show count after mount to avoid mismatch */}
             {mounted && totalItems > 0 && (
@@ -167,6 +183,15 @@ export default function Header() {
               <>
                 <Link href="/" onClick={handleToggle} className="mobile-link-nav">
                   Whiskey
+                </Link>
+                <Link href="/" onClick={handleToggle}  className="mobile-link-nav">
+                  Wine
+                </Link>
+                 <Link href="/" onClick={handleToggle} className="mobile-link-nav">
+                  Whiskey
+                </Link>
+                <Link href="/" onClick={handleToggle}  className="mobile-link-nav">
+                  Wine
                 </Link>
                 <Link href="/" onClick={handleToggle}  className="mobile-link-nav">
                   Wine

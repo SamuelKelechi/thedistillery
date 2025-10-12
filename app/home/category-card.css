@@ -1,5 +1,5 @@
 .categoryCard {
-  width: 100%;
+  width: 300px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -35,6 +35,8 @@
   font-weight: 600;
 }
 
-/* .categoryCard_btn{
-  
-} */
+@media screen and (max-width: 768px){
+  .categoryCard {
+    justify-content: center;
+  }
+}

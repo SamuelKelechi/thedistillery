@@ -1,4 +1,4 @@
-import "../styles/recommended.css"
+import "./recommended.css"
 import RecommendedCard from "./recommended-card"
 
 const Recommended = () => {

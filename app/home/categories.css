@@ -1,5 +1,5 @@
 .categories {
-  padding: 15px;
+  padding: 50px 15px;
   width: 100%;
   padding-bottom: 40px;
   min-height: 60vh;
@@ -12,4 +12,17 @@
 .categories_header {
   font-size: 51px;
   font-weight: 400;
+  padding-left: 10px;
+}
+
+@media screen and (max-width: 768px){
+  .categories_header{
+    font-size: 30px;
+    font-weight: 500;
+    text-align: center;
+    padding: 0;
+  }
+  .categories {
+  padding: 20px 0;
+}
 }
