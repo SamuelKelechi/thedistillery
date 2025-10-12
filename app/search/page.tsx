@@ -1,6 +1,7 @@
 "use client";
+
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 
 type Product = {
@@ -19,7 +20,7 @@ type Category = {
   name: string;
 };
 
-export default function SearchPage() {
+function SearchContent() {
   const searchParams = useSearchParams();
   const query = (searchParams.get("q") || "").toLowerCase();
   const router = useRouter();
@@ -35,24 +36,28 @@ export default function SearchPage() {
     const fetchData = async () => {
       setLoading(true);
 
-      const productsRes = await fetch("/api/products");
-      const allProducts: Product[] = await productsRes.json();
+      // ✅ Fetch both at the same time
+      const [productsRes, categoriesRes] = await Promise.all([
+        fetch("/api/products", { cache: "no-store" }),
+        fetch("/api/categories", { cache: "no-store" }),
+      ]);
 
-      const categoriesRes = await fetch("/api/categories");
-      const allCategories: Category[] = await categoriesRes.json();
+      const [allProducts, allCategories] = await Promise.all([
+        productsRes.json(),
+        categoriesRes.json(),
+      ]);
 
-      // 🔹 Partial match for search term
-      const filteredProducts = allProducts.filter((p) =>
+      // 🔹 Filter by query
+      const filteredProducts = allProducts.filter((p: Product) =>
         p.name.toLowerCase().includes(query)
       );
-
-      const filteredCategories = allCategories.filter((c) =>
+      const filteredCategories = allCategories.filter((c: Category) =>
         c.name.toLowerCase().includes(query)
       );
 
       setProducts(filteredProducts);
       setCategories(filteredCategories);
-      setActiveCategory(null); // Reset any active category
+      setActiveCategory(null);
       setLoading(false);
     };
 
@@ -61,14 +66,15 @@ export default function SearchPage() {
 
   const handleCategoryClick = async (categoryId: string) => {
     setLoading(true);
-    const res = await fetch("/api/products");
+
+    // ✅ Reuse cached product data (optional: could refetch if needed)
+    const res = await fetch("/api/products", { cache: "no-store" });
     const allProducts: Product[] = await res.json();
     const filteredProducts = allProducts.filter(
       (p) => p.categoryId === categoryId
     );
 
     const clickedCategory = categories.find((c) => c.id === categoryId) || null;
-
     setProducts(filteredProducts);
     setActiveCategory(clickedCategory);
     setLoading(false);
@@ -78,12 +84,12 @@ export default function SearchPage() {
 
   return (
     <div className="p-6">
-      {/* 🔹 Breadcrumb / Active filter display */}
+      {/* 🔹 Breadcrumb */}
       <div className="mb-4">
         {activeCategory ? (
           <p>
             Showing products in category:{" "}
-            <span className="font-semibold">{activeCategory.name}</span>{" "}
+            <span className="font-semibold">{activeCategory.name}</span>
             <button
               onClick={() => {
                 setActiveCategory(null);
@@ -96,12 +102,12 @@ export default function SearchPage() {
           </p>
         ) : (
           <h1 className="text-2xl font-bold">
-            Search results for: "{query}"
+            Search results for: “{query}”
           </h1>
         )}
       </div>
 
-      {/* Categories */}
+      {/* 🔹 Categories */}
       {!activeCategory && categories.length > 0 && (
         <div className="mb-6">
           <h2 className="text-xl font-semibold mb-2">Matching Categories</h2>
@@ -119,11 +125,13 @@ export default function SearchPage() {
         </div>
       )}
 
-      {/* Products */}
+      {/* 🔹 Products */}
       {products.length > 0 ? (
         <div>
           <h2 className="text-xl font-semibold mb-2">
-            {activeCategory ? `Products in ${activeCategory.name}` : "Matching Products"}
+            {activeCategory
+              ? `Products in ${activeCategory.name}`
+              : "Matching Products"}
           </h2>
           <ul className="flex gap-6 flex-wrap">
             {products.map((product) => (
@@ -156,5 +164,13 @@ export default function SearchPage() {
         <p>No products found.</p>
       )}
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<p className="p-6">Loading search results...</p>}>
+      <SearchContent />
+    </Suspense>
   );
 }

@@ -2,16 +2,29 @@ import prisma from "@/lib/prisma";
 import ProductDetailClient from "./ProductDetailClient";
 
 export default async function ProductDetailPage(props: { params: Promise<{ id: string }> }) {
-  // ✅ await the params
   const { id } = await props.params;
 
-  const product = await prisma.product.findUnique({
-    where: { id },
-  });
+  const product = await prisma.product.findUnique({ where: { id } });
 
   if (!product) {
     return <p className="p-6">❌ Product not found</p>;
   }
 
-  return <ProductDetailClient product={product} />;
+  // ✅ Replace nulls safely before passing to client
+  const safeProduct = {
+    ...product,
+    name: product.name ?? "Unnamed Product",
+    description: product.description ?? "",
+    image1: product.image1 ?? "",
+    image2: product.image2 ?? "",
+    image3: product.image3 ?? "",
+    priceRange: product.priceRange ?? "",
+    bottlePrice: product.bottlePrice ?? 0,
+    cartonPrice: product.cartonPrice ?? 0,
+    sku: product.sku ?? "N/A",
+    bottlesPerCarton: product.bottlesPerCarton ?? 0,
+    alcVol: product.alcVol ?? "",
+  };
+
+  return <ProductDetailClient product={safeProduct} />;
 }
