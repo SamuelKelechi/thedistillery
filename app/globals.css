@@ -159,7 +159,7 @@ body {
 
 /* CART PAGE */
 .cart-page {
-  min-height: 100vh;
+  min-height: 30vh;
   padding: 20px;
   display: flex;
   justify-content: center;

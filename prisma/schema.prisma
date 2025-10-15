@@ -8,24 +8,31 @@ datasource db {
 }
 
 model Category {
-  id       String    @id @default(auto()) @map("_id") @db.ObjectId
-  name     String    @unique
-  products Product[]
+  id        String               @id @default(auto()) @map("_id") @db.ObjectId
+  name      String               @unique
+  products  ProductCategoryLink[]
 }
 
 model Product {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  id          String               @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String?
   image1      String?
   image2      String?
   image3      String?
-  priceRange  String?   
+  priceRange  String?
   bottlePrice Float?
   cartonPrice Float?
   sku         String?
   bottlesPerCarton Int?
   alcVol      String?
-  categoryId  String   @db.ObjectId
-  category    Category @relation(fields: [categoryId], references: [id])
+  categories  ProductCategoryLink[]
+}
+
+model ProductCategoryLink {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  product     Product   @relation(fields: [productId], references: [id])
+  productId   String    @db.ObjectId
+  category    Category  @relation(fields: [categoryId], references: [id])
+  categoryId  String    @db.ObjectId
 }

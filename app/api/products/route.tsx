@@ -4,6 +4,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
+    // Create product
     const product = await prisma.product.create({
       data: {
         name: body.name,
@@ -15,21 +16,60 @@ export async function POST(req: Request) {
         bottlePrice: parseFloat(body.bottlePrice),
         cartonPrice: parseFloat(body.cartonPrice),
         sku: body.sku,
-        categoryId: body.categoryId,
         alcVol: body.alcVol,
+        bottlesPerCarton: parseInt(body.bottlesPerCarton) || 0,
       },
     });
 
-    return new Response(JSON.stringify(product), { status: 201 });
+    // If categories were selected, link them
+    if (Array.isArray(body.categoryIds) && body.categoryIds.length > 0) {
+      await Promise.all(
+        body.categoryIds.map(async (catId: string) => {
+          await prisma.productCategoryLink.create({
+            data: {
+              productId: product.id,
+              categoryId: catId,
+            },
+          });
+        })
+      );
+    }
+
+    return new Response(JSON.stringify({ success: true, product }), {
+      status: 201,
+    });
   } catch (error: any) {
-    console.error(error);
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    console.error("❌ Error creating product:", error);
+    return new Response(
+      JSON.stringify({ success: false, error: error.message }),
+      { status: 500 }
+    );
   }
 }
 
 export async function GET() {
-  const products = await prisma.product.findMany({
-    include: { category: true },
-  });
-  return new Response(JSON.stringify(products));
+  try {
+    const products = await prisma.product.findMany({
+      include: {
+        categories: {
+          include: {
+            category: true,
+          },
+        },
+      },
+    });
+
+    const formatted = products.map((p) => ({
+      ...p,
+      categoryNames: p.categories.map((c) => c.category.name),
+    }));
+
+    return new Response(JSON.stringify(formatted), { status: 200 });
+  } catch (error: any) {
+    console.error("❌ Error fetching products:", error);
+    return new Response(
+      JSON.stringify({ success: false, error: error.message }),
+      { status: 500 }
+    );
+  }
 }

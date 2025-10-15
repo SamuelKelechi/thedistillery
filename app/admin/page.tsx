@@ -1,10 +1,29 @@
 "use client";
+
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import type { MultiValue, ActionMeta } from "react-select";
 
 export default function AdminPage() {
   const [items, setItems] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
+
+  // ✅ Dynamic import of react-select
+  const Select = dynamic(
+  () => import("react-select").then((mod) => mod.default),
+  { ssr: false }
+) as unknown as React.ComponentType<{
+  isMulti?: boolean;
+  name?: string;
+  options: { value: string; label: string }[];
+  value?: { value: string; label: string }[];
+  onChange: (
+    newValue: MultiValue<{ value: string; label: string }>,
+    actionMeta: ActionMeta<{ value: string; label: string }>
+  ) => void;
+  placeholder?: string;
+}>;
 
   const [form, setForm] = useState({
     name: "",
@@ -16,12 +35,11 @@ export default function AdminPage() {
     bottlePrice: "",
     cartonPrice: "",
     sku: "",
-    categoryId: "",
+    categoryIds: [] as string[],
     alcVol: "",
     bottlesPerCarton: "",
   });
 
-  // 🔎 Search & Filter state
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
@@ -29,7 +47,7 @@ export default function AdminPage() {
   useEffect(() => {
     fetch("/api/products")
       .then((res) => res.json())
-      .then((data) => setItems(data))
+      .then(setItems)
       .catch((err) => console.error("Error fetching products:", err));
   }, []);
 
@@ -37,24 +55,23 @@ export default function AdminPage() {
   useEffect(() => {
     fetch("/api/categories")
       .then((res) => res.json())
-      .then((data) => setCategories(data));
+      .then(setCategories)
+      .catch((err) => console.error("Error fetching categories:", err));
   }, []);
 
-  // ✅ Delete
+  // ✅ Delete product
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this product?")) return;
 
     try {
-      const res = await fetch(`/api/products/${id}`, {
-        method: "DELETE",
-      });
-
+      const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
       const data = await res.json();
+
       if (data.success) {
         alert("✅ Product deleted!");
         setItems((prev) => prev.filter((item) => item.id !== id));
       } else {
-        alert("❌ Failed to delete");
+        alert("❌ Failed to delete product");
       }
     } catch (err) {
       console.error(err);
@@ -62,78 +79,67 @@ export default function AdminPage() {
     }
   };
 
-  // ✅ Start editing
+  // ✅ Edit product
   const handleEdit = (product: any) => {
     setEditingId(product.id);
     setForm({
-        name: product.name ?? "",
-        description: product.description ?? "",
-        image1: product.image1 ?? "",
-        image2: product.image2 ?? "",
-        image3: product.image3 ?? "",
-        priceRange: product.priceRange ?? "",
-        bottlePrice: product.bottlePrice ?? 0,
-        cartonPrice: product.cartonPrice ?? 0,
-        sku: product.sku ?? "",
-        categoryId: product.categoryId ?? "",
-        alcVol: product.alcVol ?? "",
-        bottlesPerCarton: product.bottlesPerCarton ?? 0,
+      name: product.name || "",
+      description: product.description || "",
+      image1: product.image1 || "",
+      image2: product.image2 || "",
+      image3: product.image3 || "",
+      priceRange: product.priceRange || "",
+      bottlePrice: product.bottlePrice?.toString() || "",
+      cartonPrice: product.cartonPrice?.toString() || "",
+      sku: product.sku || "",
+      categoryIds:
+        product.categories?.map((link: any) => link.category.id) || [],
+      alcVol: product.alcVol || "",
+      bottlesPerCarton: product.bottlesPerCarton?.toString() || "",
     });
   };
 
   // ✅ Handle input change
   const handleChange = (
     e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
   };
 
-  
-// ✅ Submit (Create or Update)
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+  // ✅ Handle submit
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  // Convert numeric fields safely
-  const payload = {
-    ...form,
-    bottlePrice: form.bottlePrice ? Number(form.bottlePrice) : 0,
-    cartonPrice: form.cartonPrice ? Number(form.cartonPrice) : 0,
-    bottlesPerCarton: form.bottlesPerCarton ? Number(form.bottlesPerCarton) : 0,
-  };
+    const payload = {
+      ...form,
+      bottlePrice: Number(form.bottlePrice) || 0,
+      cartonPrice: Number(form.cartonPrice) || 0,
+      bottlesPerCarton: Number(form.bottlesPerCarton) || 0,
+    };
 
-  if (editingId) {
-    // 🔹 Update
-    const res = await fetch(`/api/products/${editingId}`, {
-      method: "PUT",
+    const method = editingId ? "PUT" : "POST";
+    const url = editingId ? `/api/products/${editingId}` : "/api/products";
+
+    const res = await fetch(url, {
+      method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
 
     if (res.ok) {
-      alert("✅ Product updated!");
-      const updated = await fetch("/api/products").then((res) => res.json());
+      alert(editingId ? "✅ Product updated!" : "✅ Product added!");
+      const updated = await fetch("/api/products").then((r) => r.json());
       setItems(updated);
       setEditingId(null);
       resetForm();
+    } else {
+      alert("❌ Failed to save product");
     }
-  } else {
-    // 🔹 Create
-    const res = await fetch("/api/products", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+  };
 
-    if (res.ok) {
-      alert("✅ Product added!");
-      const updated = await fetch("/api/products").then((res) => res.json());
-      setItems(updated);
-      resetForm();
-    }
-  }
-};
   // ✅ Reset form
   const resetForm = () => {
     setForm({
@@ -146,212 +152,219 @@ const handleSubmit = async (e: React.FormEvent) => {
       bottlePrice: "",
       cartonPrice: "",
       sku: "",
-      categoryId: "",
+      categoryIds: [],
       alcVol: "",
       bottlesPerCarton: "",
     });
   };
 
-  // 🔎 Apply search + filter
+  // ✅ Filter products
   const filteredItems = items.filter((product) => {
-  const name = product.name?.toString().toLowerCase() || "";
-  const sku = product.sku?.toString().toLowerCase() || "";
+    const name = product.name?.toLowerCase() || "";
+    const sku = product.sku?.toLowerCase() || "";
 
-  const matchesSearch =
-    name.includes(searchTerm.toLowerCase()) ||
-    sku.includes(searchTerm.toLowerCase());
+    const matchesSearch =
+      name.includes(searchTerm.toLowerCase()) ||
+      sku.includes(searchTerm.toLowerCase());
 
-  const matchesCategory =
-    !selectedCategory || product.categoryId === selectedCategory;
+    const matchesCategory =
+      !selectedCategory ||
+      product.categories?.some(
+        (link: any) => link.category.id === selectedCategory
+      );
 
-  return matchesSearch && matchesCategory;
-});
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <>
-     {/* 🔎 Search + Filter Controls */}
-      <div>
-        <input
-          type="text"
-          placeholder="Search by name or SKU"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-        >
-          <option value="">All Categories</option>
-          {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Add / Edit form */}
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-4 p-4"
-        style={{ display: "flex", flexDirection: "column", width: "500px" }}
+      {/* 🔍 Search + Filter */}
+      <div
+        style={{
+          marginBottom: "1rem",
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
       >
-        <input
-          type="text"
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          required
-          placeholder="Product name"
-        />
-        <textarea
-          name="description"
-          value={form.description}
-          onChange={handleChange}
-          required
-          placeholder="Description"
-        />
-        <input
-          type="text"
-          name="image1"
-          value={form.image1}
-          onChange={handleChange}
-          required
-          placeholder="Image 1 URL"
-        />
-        <input
-          type="text"
-          name="image2"
-          value={form.image2}
-          onChange={handleChange}
-          placeholder="Image 2 URL"
-        />
-        <input
-          type="text"
-          name="image3"
-          value={form.image3}
-          onChange={handleChange}
-          placeholder="Image 3 URL"
-        />
-        <input
-          type="text"
-          name="priceRange"
-          value={form.priceRange}
-          onChange={handleChange}
-          required
-          placeholder="Price Range e.g. 12,000.00 - 74,000.00"
-        />
-        <input
-          type="number"
-          name="bottlePrice"
-          value={form.bottlePrice}
-          onChange={handleChange}
-          required
-          placeholder="Bottle Price"
-        />
-        <input
-          type="number"
-          name="cartonPrice"
-          value={form.cartonPrice}
-          onChange={handleChange}
-          required
-          placeholder="Carton Price"
-        />
-         <input
-          type="number"
-          name="bottlesPerCarton"
-          value={form.bottlesPerCarton}
-          onChange={handleChange}
-          required
-          placeholder="bottlesPerCarton"
-        />
-          <input
-          type="text"
-          name="alcVol"
-          value={form.alcVol}
-          onChange={handleChange}
-          required
-          placeholder="Alcoholic Vol"
-        />
-        <input
-          type="text"
-          name="sku"
-          value={form.sku}
-          onChange={handleChange}
-          required
-          placeholder="SKU"
-        />
-        <select
-          name="categoryId"
-          value={form.categoryId}
-          onChange={handleChange}
-          required
-        >
-          <option value="">-- Select Category --</option>
-          {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
-
-        <button
-          type="submit"
-        >
-          {editingId ? "Update Product" : "Add Product"}
-        </button>
-        {editingId && (
-          <button
-            type="button"
-            onClick={() => {
-              setEditingId(null);
-              resetForm();
-            }}
-          >
-            Cancel
-          </button>
-        )}
-      </form>
-
-      {/* Products List */}
-      <div >
-        <h1 >Admin Products</h1>
-        <ul
+        {/* 📝 Add / Edit Form */}
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4 p-4"
           style={{
             display: "flex",
-            width: "90%",
-            justifyContent: "space-around",
-            flexWrap: "wrap",
+            flexDirection: "column",
+            width: "500px",
+            gap: "8px",
+            marginBottom: "2rem",
           }}
         >
-          {filteredItems.map((product) => (
-            <li
-              key={product.id}
-              style={{ width: "250px", marginTop: "15px" }}
+          <input
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="Product name"
+            required
+          />
+          <textarea
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            placeholder="Description"
+          />
+          <input
+            name="image1"
+            value={form.image1}
+            onChange={handleChange}
+            placeholder="Image 1 URL"
+          />
+          <input
+            name="image2"
+            value={form.image2}
+            onChange={handleChange}
+            placeholder="Image 2 URL"
+          />
+          <input
+            name="image3"
+            value={form.image3}
+            onChange={handleChange}
+            placeholder="Image 3 URL"
+          />
+          <input
+            name="priceRange"
+            value={form.priceRange}
+            onChange={handleChange}
+            placeholder="Price Range (e.g. 12,000 - 74,000)"
+          />
+          <input
+            name="bottlePrice"
+            type="number"
+            value={form.bottlePrice}
+            onChange={handleChange}
+            placeholder="Bottle Price"
+          />
+          <input
+            name="cartonPrice"
+            type="number"
+            value={form.cartonPrice}
+            onChange={handleChange}
+            placeholder="Carton Price"
+          />
+          <input
+            name="bottlesPerCarton"
+            type="number"
+            value={form.bottlesPerCarton}
+            onChange={handleChange}
+            placeholder="Bottles Per Carton"
+          />
+          <input
+            name="alcVol"
+            value={form.alcVol}
+            onChange={handleChange}
+            placeholder="Alcohol Vol."
+          />
+          <input
+            name="sku"
+            value={form.sku}
+            onChange={handleChange}
+            placeholder="SKU"
+          />
+
+          {/* ✅ Fixed Multi-select Categories with typing */}
+          <Select
+            isMulti
+            name="categoryIds"
+            options={categories.map((cat) => ({
+              value: cat.id,
+              label: cat.name,
+            }))}
+            value={categories
+              .filter((cat) => form.categoryIds.includes(cat.id))
+              .map((cat) => ({ value: cat.id, label: cat.name }))}
+            onChange={(selectedOptions) =>
+              setForm({
+                ...form,
+                categoryIds: selectedOptions.map((opt) => opt.value),
+              })
+            }
+            placeholder="Select Categories..."
+          />
+
+          <button type="submit">
+            {editingId ? "Update Product" : "Add Product"}
+          </button>
+          {editingId && (
+            <button
+              type="button"
+              onClick={() => {
+                setEditingId(null);
+                resetForm();
+              }}
             >
-              <img src={product.image1} width={200} height={200} />
-              <p>{product.name}</p>
-              <h2>Alc/Vol. {product.alcVol}</h2>
+              Cancel
+            </button>
+          )}
+        </form>
 
-              <p>SKU: {product.sku}</p>
-              <p>₦{product.bottlePrice.toLocaleString()} (Bottle)</p>
-              <p>₦{product.cartonPrice.toLocaleString()} (Carton)</p>
-
-              <div>
-                <button
-                  onClick={() => handleEdit(product)}
+        {/* 🧾 Product List */}
+        <div>
+          <h2>Admin Products</h2>
+          <ul
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "20px",
+            }}
+          >
+            {filteredItems.map((product) => (
+              <li
+                key={product.id}
+                style={{
+                  width: "250px",
+                  border: "1px solid #ddd",
+                  borderRadius: "10px",
+                  padding: "10px",
+                  textAlign: "center",
+                }}
+              >
+                <img
+                  src={product.image1}
+                  width={200}
+                  height={200}
+                  alt={product.name}
+                  style={{ borderRadius: "8px" }}
+                />
+                <p>
+                  <strong>{product.name}</strong>
+                </p>
+                <p>Alc/Vol: {product.alcVol}</p>
+                <p>SKU: {product.sku}</p>
+                <p>₦{product.bottlePrice.toLocaleString()} (Bottle)</p>
+                <p>₦{product.cartonPrice.toLocaleString()} (Carton)</p>
+                <p>
+                  Categories:{" "}
+                  {product.categories
+                    ?.map((link: any) => link.category.name)
+                    .join(", ") || "—"}
+                </p>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-around",
+                    marginTop: "10px",
+                  }}
                 >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(product.id)}
-                >
-                  Delete
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
+                  <button onClick={() => handleEdit(product)}>Edit</button>
+                  <button onClick={() => handleDelete(product.id)}>
+                    Delete
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </>
   );

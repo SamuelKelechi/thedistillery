@@ -16,7 +16,17 @@ export default function CartPage() {
   return (
     <>
     <div className="cart-page">
-      <div className="cart-container">
+      {cart.length < 1 ? (
+        <h2>Your Cart is Empty 
+            <a href='/products' style={{textDecoration:"none"}}>
+              <button className="continue-shopping">
+                <span className="cart-arrow-left">←</span>
+                Start shopping
+              </button>
+            </a>
+        </h2>
+          ):(
+        <div className="cart-container">
         <header className="cart-header">
           <h1 className="cart-title">My Cart</h1>
           <a href='/products' style={{textDecoration:"none"}}>
@@ -181,6 +191,7 @@ export default function CartPage() {
           </div>
         </div>
       </div>
+      ) }
     </div>
     
     </>
