@@ -91,6 +91,9 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .heropage{
+        height: 70vh;
+    }
     .heropage-carousel-item h2{
         font-size: 2rem;
     }
