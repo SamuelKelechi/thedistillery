@@ -4,8 +4,14 @@ import Link from "next/link";
 
 export default async function ProductsPage() {
   const products = await prisma.product.findMany({
-    include: { category: true },
-  });
+  include: {
+    categories: {
+      include: {
+        category: true,
+      },
+    },
+  },
+});
 
   return (
     <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">

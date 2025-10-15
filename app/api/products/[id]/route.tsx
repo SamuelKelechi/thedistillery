@@ -17,14 +17,17 @@ export async function PUT(
         name: body.name,
         description: body.description,
         image1: body.image1,
-        image2: body.image2,
-        image3: body.image3,
+        image2: body.image2 || null,
+        image3: body.image3 || null,
         priceRange: body.priceRange,
         bottlePrice: body.bottlePrice,
         cartonPrice: body.cartonPrice,
         sku: body.sku,
-        categoryId: body.categoryId,
         alcVol: body.alcVol,
+        categories: {
+          set: [], // clear old ones first
+          connect: body.categoryIds.map((id: string) => ({ categoryId: id })),
+        },
       },
     });
 
