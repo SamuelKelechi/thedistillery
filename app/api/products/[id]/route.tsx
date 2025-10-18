@@ -1,17 +1,17 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma"; // your prisma client
+import prisma from "@/lib/prisma";
 
-
-// ✅ Update product
+// ✅ Update product with categories
 export async function PUT(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params; // ⬅️ must await in Next.js
+  const { id } = await params;
   const body = await req.json();
 
   try {
-    const updated = await prisma.product.update({
+    // ✅ Step 1: Update the basic product data
+    await prisma.product.update({
       where: { id },
       data: {
         name: body.name,
@@ -24,33 +24,58 @@ export async function PUT(
         cartonPrice: body.cartonPrice,
         sku: body.sku,
         alcVol: body.alcVol,
-        categories: {
-          set: [], // clear old ones first
-          connect: body.categoryIds.map((id: string) => ({ categoryId: id })),
-        },
       },
     });
 
-    return NextResponse.json(updated);
+    // ✅ Step 2: Remove existing category links
+    await prisma.productCategoryLink.deleteMany({
+      where: { productId: id },
+    });
+
+    // ✅ Step 3: Create new category links
+    if (Array.isArray(body.categoryIds) && body.categoryIds.length > 0) {
+      await prisma.productCategoryLink.createMany({
+        data: body.categoryIds.map((catId: string) => ({
+          productId: id,
+          categoryId: catId,
+        })),
+      });
+    }
+
+    // ✅ Step 4: Return updated product with categories
+    const fullProduct = await prisma.product.findUnique({
+      where: { id },
+      include: {
+        categories: { include: { category: true } },
+      },
+    });
+
+    return NextResponse.json(fullProduct);
   } catch (err) {
     console.error("❌ Error updating product:", err);
-    return NextResponse.json({ error: "Failed to update" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to update product" }, { status: 500 });
   }
 }
 
-
-// ✅ Delete product
 export async function DELETE(
   req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> }   // 👈 notice the Promise
 ) {
-  const { id } = await params;
+  const { id } = await params;   // ✅ this line goes here
 
   try {
+    await prisma.productCategoryLink.deleteMany({
+      where: { productId: id },
+    });
+
     await prisma.product.delete({ where: { id } });
+
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error("❌ Error deleting product:", err);
-    return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: "Failed to delete" },
+      { status: 500 }
+    );
   }
 }

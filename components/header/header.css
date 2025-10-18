@@ -88,6 +88,7 @@
 
 .dropdown-menu li a:hover {
   background: #f2f2f2;
+  color: #eea146;;
 }
 
 .search-container{
@@ -125,7 +126,10 @@
     transition: border-bottom 0.3s ease;
 }
 .Link-nav:hover{
-    border-bottom: 2px solid black;
+    color: #eea146;
+}
+.dropdown-toggle:hover{
+    color: #eea146;
 }
 .mobile-menue{
     display: none;

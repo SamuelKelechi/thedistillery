@@ -59,25 +59,41 @@ export default function AdminPage() {
       .catch((err) => console.error("Error fetching categories:", err));
   }, []);
 
+
+  // Define the response type
+interface DeleteResponse {
+  success?: boolean;
+  error?: string;
+}
+
   // ✅ Delete product
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this product?")) return;
+const handleDelete = async (id: string) => {
+  if (!confirm("Are you sure you want to delete this product?")) return;
 
+  try {
+    const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
+
+    // ✅ Safely parse JSON
+    let data: DeleteResponse;
     try {
-      const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
-      const data = await res.json();
-
-      if (data.success) {
-        alert("✅ Product deleted!");
-        setItems((prev) => prev.filter((item) => item.id !== id));
-      } else {
-        alert("❌ Failed to delete product");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("⚠️ Error deleting product");
+      data = await res.json();
+    } catch {
+      data = { success: res.ok };
     }
-  };
+
+    if (res.ok && data.success) {
+      alert("✅ Product deleted!");
+      setItems((prev) => prev.filter((item) => item.id !== id));
+    } else {
+      alert("❌ Failed to delete product");
+    }
+  } catch (err) {
+    console.error("⚠️ Error deleting product:", err);
+    alert("⚠️ Error deleting product");
+  }
+};
+
+
 
   // ✅ Edit product
   const handleEdit = (product: any) => {
@@ -309,13 +325,16 @@ export default function AdminPage() {
         </form>
 
         {/* 🧾 Product List */}
-        <div>
+        <div style={{width:'90%', display:'flex', flexDirection:'column', alignItems:'center'}}>
           <h2>Admin Products</h2>
+          <br/>
           <ul
             style={{
               display: "flex",
               flexWrap: "wrap",
-              gap: "20px",
+              gap: "30px",
+              justifyContent:"center",
+              listStyleType:"none"
             }}
           >
             {filteredItems.map((product) => (

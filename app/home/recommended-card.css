@@ -8,11 +8,11 @@
 }
 .recommendedCard_img {
   width: 100%;
-  height: 290px;
-  background: antiquewhite;
+  height: 250px;
+  /* background: antiquewhite; */
   border-radius: 20px;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: contain;
 }
 
 .recommendedCard_text {
@@ -31,4 +31,10 @@
   color: white;
   background: #063a47;
   font-family: sans-serif;
+}
+
+@media screen and (max-width: 768px){
+  .recommendedCard {
+    align-items: center;
+  }
 }

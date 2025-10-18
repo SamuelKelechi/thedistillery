@@ -7,13 +7,6 @@ const Categories = () => {
       <h1 className="categories_header">Explore Drink Categories</h1>
       <div className="card_holder">
         <CategoryCard />
-        <CategoryCard />
-        <CategoryCard />
-        <CategoryCard />
-        <CategoryCard />
-        <CategoryCard />
-        <CategoryCard />
-        <CategoryCard />
       </div>
     </div>
   );

@@ -58,6 +58,7 @@ export async function GET() {
         },
       },
     });
+    console.log("🧩 Raw Products from DB:", products);
 
     const formatted = products.map((p) => ({
       ...p,

@@ -36,30 +36,59 @@ function SearchContent() {
     const fetchData = async () => {
       setLoading(true);
 
-      // ✅ Fetch both at the same time
-      const [productsRes, categoriesRes] = await Promise.all([
-        fetch("/api/products", { cache: "no-store" }),
-        fetch("/api/categories", { cache: "no-store" }),
-      ]);
+      try {
+        const trimmedQuery = query.trim().toLowerCase();
+        if (!trimmedQuery) {
+          setProducts([]);
+          setCategories([]);
+          setLoading(false);
+          return;
+        }
 
-      const [allProducts, allCategories] = await Promise.all([
-        productsRes.json(),
-        categoriesRes.json(),
-      ]);
+        const [productsRes, categoriesRes] = await Promise.all([
+          fetch("/api/products", { cache: "no-store" }),
+          fetch("/api/categories", { cache: "no-store" }),
+        ]);
 
-      // 🔹 Filter by query
-      const filteredProducts = allProducts.filter((p: Product) =>
-        p.name.toLowerCase().includes(query)
-      );
-      const filteredCategories = allCategories.filter((c: Category) =>
-        c.name.toLowerCase().includes(query)
-      );
+        if (!productsRes.ok || !categoriesRes.ok) {
+          throw new Error("Failed to fetch data");
+        }
 
-      setProducts(filteredProducts);
-      setCategories(filteredCategories);
-      setActiveCategory(null);
+        const allProducts = await productsRes.json();
+        const allCategories = await categoriesRes.json();
+
+        if (!Array.isArray(allProducts) || !Array.isArray(allCategories)) {
+          console.error("Invalid data format from API");
+          setProducts([]);
+          setCategories([]);
+          setLoading(false);
+          return;
+        }
+
+        console.log("🔍 All Products:", allProducts);
+        console.log("🔍 All Categories:", allCategories);
+        console.log("🔍 Query:", trimmedQuery);
+
+        const filteredProducts = allProducts.filter(
+          (p: Product) => p.name?.toLowerCase().includes(trimmedQuery)
+        );
+
+        const filteredCategories = allCategories.filter(
+          (c: Category) => c.name?.toLowerCase().includes(trimmedQuery)
+        );
+
+        setProducts(filteredProducts);
+        setCategories(filteredCategories);
+        setActiveCategory(null);
+      } catch (err) {
+        console.error("❌ Search error:", err);
+        setProducts([]);
+        setCategories([]);
+      }
+
       setLoading(false);
     };
+
 
     fetchData();
   }, [query]);

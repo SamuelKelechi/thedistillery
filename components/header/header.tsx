@@ -58,7 +58,7 @@ export default function Header() {
             <Link href="/" className="Link-nav">
               Home
             </Link>
-            <Link href="/" className="Link-nav">
+            <Link href="/about" className="Link-nav">
               About Us
             </Link>
 
@@ -80,28 +80,28 @@ export default function Header() {
 
               <ul className="dropdown-menu">
                 <li>
-                  <Link href="/">Whiskey</Link>
+                  <Link href="/categories/68ce83d56457d49882ce1efe">Whiskey</Link>
                 </li>
                 <li>
-                  <Link href="/">Wine</Link>
+                  <Link href="/categories/68ce840b6457d49882ce1f00">Wine</Link>
                 </li>
                 <li>
                   <Link href="/">Champagne</Link>
                 </li>
                 <li>
-                  <Link href="/">Spirit</Link>
+                  <Link href="/categories/68ce84036457d49882ce1eff">Spirit</Link>
                 </li>
                 <li>
-                  <Link href="/">Vodka</Link>
+                  <Link href="/categories/68ce84136457d49882ce1f01">Vodka</Link>
                 </li>
                 <li>
                   <Link href="/">Brandy</Link>
                 </li>
                 <li>
-                  <Link href="/">Gin</Link>
+                  <Link href="/categories/68ce84266457d49882ce1f04">Gin</Link>
                 </li>
                 <li>
-                  <Link href="/">Cream</Link>
+                  <Link href="/categories/68ce84496457d49882ce1f06">Cream</Link>
                 </li>
                 <li>
                   <Link href="/">Tequila</Link>
@@ -109,10 +109,13 @@ export default function Header() {
                 <li>
                   <Link href="/">Cognac</Link>
                 </li>
+                <li>
+                  <Link href="/categories/68ce841d6457d49882ce1f02">Rum</Link>
+                </li>
               </ul>
             </div>
 
-            <Link href="/" className="Link-nav">
+            <Link href="/contact" className="Link-nav">
               Contact Us
             </Link>
           </nav>
@@ -163,7 +166,7 @@ export default function Header() {
           <Link href="/" onClick={handleToggle} className="mobile-link-nav">
             Home
           </Link>
-          <Link href="/" onClick={handleToggle}  className="mobile-link-nav">
+          <Link href="/about" onClick={handleToggle}  className="mobile-link-nav">
             About
           </Link>
 
@@ -181,32 +184,44 @@ export default function Header() {
             </button>
             {mobileDropdown && (
               <>
-                <Link href="/" onClick={handleToggle} className="mobile-link-nav">
+                <Link href="/categories/68ce83d56457d49882ce1efe" onClick={handleToggle} className="mobile-link-nav">
                   Whiskey
                 </Link>
-                <Link href="/" onClick={handleToggle}  className="mobile-link-nav">
+                <Link href="/categories/68ce840b6457d49882ce1f00" onClick={handleToggle}  className="mobile-link-nav">
                   Wine
                 </Link>
                  <Link href="/" onClick={handleToggle} className="mobile-link-nav">
-                  Whiskey
+                  Champagne
                 </Link>
-                <Link href="/" onClick={handleToggle}  className="mobile-link-nav">
-                  Wine
+                <Link href="/categories/68ce84036457d49882ce1eff" onClick={handleToggle}  className="mobile-link-nav">
+                  Spirit
                 </Link>
-                <Link href="/" onClick={handleToggle}  className="mobile-link-nav">
-                  Wine
+                <Link href="/categories/68ce84136457d49882ce1f01" onClick={handleToggle}  className="mobile-link-nav">
+                  Vodka
                 </Link>
                  <Link href="/" onClick={handleToggle} className="mobile-link-nav">
-                  Whiskey
+                  Brandy
+                </Link>
+                <Link href="/categories/68ce84266457d49882ce1f04" onClick={handleToggle}  className="mobile-link-nav">
+                  Gin
+                </Link>
+                <Link href="/categories/68ce84496457d49882ce1f06" onClick={handleToggle}  className="mobile-link-nav">
+                  Cream
                 </Link>
                 <Link href="/" onClick={handleToggle}  className="mobile-link-nav">
-                  Wine
+                  Tequila
+                </Link>
+                <Link href="/" onClick={handleToggle}  className="mobile-link-nav">
+                  Cognac
+                </Link>
+                 <Link href="/categories/68ce841d6457d49882ce1f02" onClick={handleToggle}  className="mobile-link-nav">
+                  Rum
                 </Link>
               </>
             )}
           </div>
 
-          <Link href="/" onClick={handleToggle} className="mobile-link-nav">
+          <Link href="/contact" onClick={handleToggle} className="mobile-link-nav">
             Contact Us
           </Link>
         </nav>

@@ -1,32 +1,41 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "@/app/context/CartContext";
+import Swal from "sweetalert2";
+
 
 interface ProductDetailClientProps {
-  product: {
+   product: {
     id: string;
     name: string;
-    description: string | null;
-    image1: string | null;
-    image2: string | null;
-    image3: string | null;
-    priceRange: string | null;
-    bottlePrice: number | null;
-    cartonPrice: number | null;
-    sku: string | null;
-    bottlesPerCarton: number | null;
-    alcVol: string | null;
+    description: string;
+    image1: string;
+    image2: string;
+    image3: string;
+    priceRange: string;
+    bottlePrice: number;
+    cartonPrice: number;
+    sku: string;
+    bottlesPerCarton: number;
+    alcVol: string;
+    categories: { id: string; name: string }[];
   };
-}
+};
 
 export default function ProductDetailClient({ product }: ProductDetailClientProps) {
   const { addToCart } = useCart();
   const [purchaseType, setPurchaseType] = useState<"bottle" | "carton" | "">("");
+  const [categories, setCategories] = useState<any[]>([]);
 
   const handleAddToCart = () => {
     if (!purchaseType) {
-      alert("Please select Bottle or Carton before adding to cart");
+       Swal.fire({
+      icon: "warning",
+      title: "Select an Option",
+      text: "Please select Bottle or Carton before adding to cart.",
+      confirmButtonColor: "#063A47",
+    });
       return;
     }
 
@@ -48,43 +57,146 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
       alcVol: product.alcVol ?? "",
     });
 
-    alert("✅ Added to cart!");
+    Swal.fire({
+    icon: "success",
+    title: "Added to Cart!",
+    text: `${product.name} has been added to your cart.`,
+    showConfirmButton: false,
+    timer: 1800,
+  });
   };
 
+  useEffect(() => {
+      fetch("/api/categories")
+        .then((res) => res.json())
+        .then(setCategories)
+        .catch((err) => console.error("Error fetching categories:", err));
+    }, []);
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">{product.name}</h1>
-      <p className="mt-2">{product.description ?? "No description available"}</p>
+        <>
+      <div className="product-page">
+        <main className="details-main-content">
+          <div className="product-container">
+            <div className="product-image-section">
+              <>
+              {product.image1 && (
+                 <img
+                  src={product.image1}
+                  alt=""
+                  className="product-image"
+                />
+              )}
+                
+                <div className="thumbnail-container">
 
-      {/* Purchase Option */}
-      <div className="mt-4">
-        <select
-          value={purchaseType}
-          onChange={(e) => setPurchaseType(e.target.value as "bottle" | "carton")}
-          className="border p-2"
-        >
-          <option value="">- Select Option -</option>
-          <option value="bottle">
-            Bottle - ₦{product.bottlePrice?.toLocaleString() ?? 0}
-          </option>
-          <option value="carton">
-            Carton - ₦{product.cartonPrice?.toLocaleString() ?? 0}
-          </option>
-        </select>
+                    <div
+                      className="thumbnail-wrapper" 
+                    >
+                      {product.image2 && (
+                        <img
+                        src={product.image2 || "/placeholder.png"}
+                        alt=""
+                        className="thumbnail-image"
+                      />
+                      )}
+                    </div>
+
+                    <div
+                      className="thumbnail-wrapper" 
+                    >
+                       {product.image3 && (
+                        <img
+                        src={product.image3 || "/placeholder.png"}
+                        alt=""
+                        className="thumbnail-image"
+                      />
+                      )}
+                    </div>
+
+                </div>
+              </>
+            </div>
+
+            <div className="product-info-section">
+              <h1 className="product-titles">{product.name}</h1>
+              <p className="product-description">{product.description}</p>
+              <p className="product-price">
+                {product.priceRange}
+              </p>
+              <div><b>ALC./VOL.:</b> {product.alcVol}</div>
+              <br/>
+              <div><b>CATEGORY:</b> {" "}
+                {product.categories?.length ? (
+                  <>
+                    {product.categories.map((c) => c?.name ?? "Unnamed").join(", ")}
+                  </>
+                ) : (
+                  <p>No categories assigned</p>
+                )}
+              </div>
+              <br />
+              <div className="product-actions">
+                <div className="option-selector">
+                  <label htmlFor="product-option">Choose option:</label>
+                  <select
+                    value={purchaseType}
+                    onChange={(e) => setPurchaseType(e.target.value as "bottle" | "carton")}
+                    className="option-dropdown"
+                  >
+                    <option value="">- Select Option -</option>
+                      <option value="bottle">
+                        Bottle - ₦{product.bottlePrice?.toLocaleString() ?? 0}
+                      </option>
+                      <option value="carton">
+                        Carton - ₦{product.cartonPrice?.toLocaleString() ?? 0}
+                      </option>
+                  </select>
+                </div>
+                {purchaseType && (
+                <p>
+                    {purchaseType === "carton"
+                      ? `${product.bottlesPerCarton ?? 0} Bottles Per Carton`
+                      : "1 Bottle"}
+                </p>
+                )}
+
+                <button
+                  className="add-to-cart-button"
+                  onClick={handleAddToCart}
+                >
+                  🛒 Add to Cart
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <section className="related-products-section">
+            <h2 className="section-title">YOU MAY ALSO LIKE</h2>
+            <div className="related-products-grid">
+
+                <div className="related-product-card">
+                  <div className="related-product-image-container">
+                    {/* <img
+                      src=""
+                      alt=""
+                      className="related-product-image"
+                    /> */}
+                  </div>
+                  <h3 className="related-product-name">
+                    Related Name
+                  </h3>
+                  <p className="related-product-price">
+                    Price
+                  </p>
+                </div>
+        
+            </div>
+          </section>
+        </main>
+
       </div>
-       <p className="mt-2 text-sm text-gray-600">
-         {purchaseType === "carton"
-          ? `${product.bottlesPerCarton ?? 0} bottles per carton`
-          : "1 bottle"}
-      </p>
-
-      {/* Add to Cart */}
-      <button
-        onClick={handleAddToCart}
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
-      >
-        🛒 Add to Cart
-      </button>
-    </div>
+    </>
   );
 }

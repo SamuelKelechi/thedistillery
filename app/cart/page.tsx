@@ -1,5 +1,6 @@
 "use client";
 import { useState } from 'react';
+import Link from 'next/link';
 
 import { useCart } from "../context/CartContext";
 
@@ -18,12 +19,12 @@ export default function CartPage() {
     <div className="cart-page">
       {cart.length < 1 ? (
         <h2>Your Cart is Empty 
-            <a href='/products' style={{textDecoration:"none"}}>
+            <Link href='/products' style={{textDecoration:"none"}}>
               <button className="continue-shopping">
                 <span className="cart-arrow-left">←</span>
                 Start shopping
               </button>
-            </a>
+            </Link>
         </h2>
           ):(
         <div className="cart-container">
