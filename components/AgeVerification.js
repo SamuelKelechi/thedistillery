@@ -28,7 +28,7 @@ export default function AgeVerification() {
     <div className="age-overlay">
       <div className="age-modal">
         <h1>CONFIRM YOUR AGE!</h1>
-        <p>Are you over the age of 18? You must be 18 years or older to access this website.</p>
+        <p>Are you over the age of 18? <br /> You must be 18 years or older to access this website.</p>
         <div className="age-buttons">
           <button className="no" onClick={handleReject}>No, I’m below 18</button>
           <button className="yes" onClick={handleAccept}>Yes, I’m above 18</button>
