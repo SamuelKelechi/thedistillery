@@ -1951,7 +1951,7 @@ textarea {
 .query-title {
   font-size: 1.8rem;
   font-weight: bold;
-  color: #222;
+  color: #204f5a;
 }
 
 .query-breadcrumb {
@@ -2128,7 +2128,8 @@ textarea {
 
 .age-buttons {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
+  gap: 5px;
 }
 
 .age-buttons button {
@@ -2166,4 +2167,10 @@ textarea {
 @keyframes popUp {
   from { transform: scale(0.8); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
+}
+
+@media screen and (max-width: 650px){
+  .age-buttons button {
+    padding: 0.6rem 0.6rem;
+  }
 }

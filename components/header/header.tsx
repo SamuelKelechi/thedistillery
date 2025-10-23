@@ -160,7 +160,7 @@ export default function Header() {
         <nav className="mobile-link-holder">
           <div className="search-contained">
             <IoIosSearch style={{ opacity: "0.6", fontSize: "25px", marginLeft:'10px' }} />
-            <input className="input-capture" placeholder="Search for drinks" />
+            <input className="input-capture" placeholder="Search for drinks" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} onKeyDown={handleKeyDown}/>
           </div>
 
           <Link href="/" onClick={handleToggle} className="mobile-link-nav">

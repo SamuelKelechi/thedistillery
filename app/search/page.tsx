@@ -75,25 +75,43 @@ function SearchContent() {
     fetchData();
   }, [query]);
 
- const handleCategoryClick = async (categoryId: string) => {
+const handleCategoryClick = async (categoryId: string) => {
   setLoading(true);
-  const res = await fetch("/api/products", { cache: "no-store" });
-  const allProducts: Product[] = await res.json();
-  const filteredProducts = allProducts.filter(
-    (p) => p.categoryId === categoryId
-  );
+  try {
+    console.log("🟢 Category Clicked:", categoryId);
 
-  const clickedCategory = categories.find((c) => c.id === categoryId) || null;
-  setProducts(filteredProducts);
-  setActiveCategory(clickedCategory);
-  setLoading(false);
+    const res = await fetch("/api/products", { cache: "no-store" });
+    const allProducts = await res.json();
+
+    // Log product structure to confirm what’s returned
+    console.log("📦 All Products Sample:", allProducts[0]);
+
+    // ✅ Filter products where any linked categoryId matches
+    const filteredProducts = allProducts.filter((p: any) =>
+      p.categories?.some((link: any) => link.categoryId === categoryId)
+    );
+
+    console.log("✅ Filtered Products:", filteredProducts.length);
+
+    if (filteredProducts.length === 0) {
+      console.warn(`⚠️ No products found for category: ${categoryId}`);
+    }
+
+    const clickedCategory = categories.find((c) => c.id === categoryId) || null;
+    setProducts(filteredProducts);
+    setActiveCategory(clickedCategory);
+  } catch (err) {
+    console.error("❌ Error filtering by category:", err);
+  } finally {
+    setLoading(false);
+  }
 };
 
   if (loading) return <p className="query-loading">Loading results...</p>;
 
   return (
     <div className="query-container">
-      {/* 🔹 Header / Breadcrumb */}
+      
       <div className="query-header">
         {activeCategory ? (
           <p className="query-breadcrumb">

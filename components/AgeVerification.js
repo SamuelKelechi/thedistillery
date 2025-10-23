@@ -1,28 +1,21 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import Swal from "sweetalert2";
 
 export default function AgeVerification() {
   const [isVerified, setIsVerified] = useState(false);
-
-  useEffect(() => {
-    // Check if the user has already verified their age
-    const verified = localStorage.getItem("ageVerified");
-    if (verified === "true") {
-      setIsVerified(true);
-    }
-  }, []);
+  const [showModal, setShowModal] = useState(true);
 
   const handleAccept = () => {
-    localStorage.setItem("ageVerified", "true");
     setIsVerified(true);
+    setShowModal(false); // Hide modal for this session only
   };
 
   const handleReject = () => {
-    alert("Sorry, you must be 18 years or older to access this site.");
     window.location.href = "https://www.google.com";
   };
 
-  if (isVerified) return null; // If verified, don't show modal
+  if (!showModal) return null; 
 
   return (
     <div className="age-overlay">
