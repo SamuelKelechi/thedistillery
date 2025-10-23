@@ -1,10 +1,12 @@
 import './globals.css'
+<script src="https://js.paystack.co/v1/inline.js"></script>
 import { ReactNode } from "react";
 import { CartProvider } from "@/app/context/CartContext";
 import FloatingCartIcon from "@/components/FloatingCartIcon";
 import Header from "@/components/header/header";
 import Footer from '@/components/footer/footer';
-import { FaShoppingCart, FaWhatsapp } from "react-icons/fa";
+import { FaWhatsapp } from "react-icons/fa";
+import AgeVerification from "@/components/AgeVerification";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -12,6 +14,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <CartProvider>
           <Header />
+          <AgeVerification />
           {children}
           <Footer />
 

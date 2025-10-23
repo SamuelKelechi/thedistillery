@@ -148,7 +148,7 @@ export default function Header() {
         <div className="top-item-holder" onClick={handleToggle}>
           <Link href="/cart" className="cart-mobile-icon">
             <ShoppingCart color="white"/>
-            {/* Only show count after mount to avoid mismatch */}
+
             {mounted && totalItems > 0 && (
               <span className="cart-badge">
                 {totalItems}

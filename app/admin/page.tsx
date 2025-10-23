@@ -308,7 +308,7 @@ const handleDelete = async (id: string) => {
             placeholder="Select Categories..."
           />
 
-          <button type="submit">
+          <button type="submit" style={{height:'40px', cursor:'pointer'}}>
             {editingId ? "Update Product" : "Add Product"}
           </button>
           {editingId && (

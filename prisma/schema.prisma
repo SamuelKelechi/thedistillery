@@ -36,3 +36,15 @@ model ProductCategoryLink {
   category    Category  @relation(fields: [categoryId], references: [id])
   categoryId  String    @db.ObjectId
 }
+
+model Order {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  reference   String
+  customerName String
+  customerEmail String
+  customerPhone String?
+  customerAddress String?
+  totalAmount Int
+  items       Json
+  createdAt   DateTime @default(now())
+}

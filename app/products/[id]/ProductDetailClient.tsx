@@ -162,6 +162,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                 )}
 
                 <button
+                style={{cursor:'pointer'}}
                   className="add-to-cart-button"
                   onClick={handleAddToCart}
                 >

@@ -134,9 +134,12 @@
 .mobile-menue{
     display: none;
 }
+.cart-badge{
+  color: white;
+}
 
 @media screen and (max-width: 950px){
-    .link-holders{
+.link-holders{
     width: 45%;
 }
 .search-container{

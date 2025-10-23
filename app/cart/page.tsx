@@ -184,11 +184,13 @@ export default function CartPage() {
               <span className="cart-summary-label"><b>TOTAL PRICE:</b> ₦{totalPrice.toLocaleString()}</span>
               <span className="cart-summary-value"></span>
             </div>
-            <button 
-              className="cart-checkout-btn"
-            >
-              Checkout <span className="cart-checkout-price"></span>
-            </button>
+            <Link href="/checkout" style={{ textDecoration: "none" }}>
+              <button 
+                className="cart-checkout-btn"
+              >
+                Checkout
+              </button>
+            </Link>
           </div>
         </div>
       </div>

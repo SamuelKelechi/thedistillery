@@ -23,11 +23,11 @@ const HowItWorks = () => {
                     <div className="how-it-works-sections">
                         <div className="how-it-works-items">
                             <MdPayment size={40} color="#044858ff"/>
-                            <p className="how-it-works-steps">Browse Our Collection of Drinks</p>
+                            <p className="how-it-works-steps">Make your Payment through our secure channel</p>
                         </div>
                         <div className="how-it-works-items">
                             <FaLocationDot size={40} color="#044858ff"/>
-                            <p className="how-it-works-steps">Browse Our Collection of Drinks</p>
+                            <p className="how-it-works-steps">Get Your Product Delivered to your Location</p>
                         </div>
                     </div>
                 </div>

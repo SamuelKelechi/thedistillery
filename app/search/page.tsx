@@ -35,7 +35,6 @@ function SearchContent() {
 
     const fetchData = async () => {
       setLoading(true);
-
       try {
         const trimmedQuery = query.trim().toLowerCase();
         if (!trimmedQuery) {
@@ -50,31 +49,16 @@ function SearchContent() {
           fetch("/api/categories", { cache: "no-store" }),
         ]);
 
-        if (!productsRes.ok || !categoriesRes.ok) {
-          throw new Error("Failed to fetch data");
-        }
+        if (!productsRes.ok || !categoriesRes.ok) throw new Error("Failed to fetch data");
 
         const allProducts = await productsRes.json();
         const allCategories = await categoriesRes.json();
 
-        if (!Array.isArray(allProducts) || !Array.isArray(allCategories)) {
-          console.error("Invalid data format from API");
-          setProducts([]);
-          setCategories([]);
-          setLoading(false);
-          return;
-        }
-
-        console.log("🔍 All Products:", allProducts);
-        console.log("🔍 All Categories:", allCategories);
-        console.log("🔍 Query:", trimmedQuery);
-
-        const filteredProducts = allProducts.filter(
-          (p: Product) => p.name?.toLowerCase().includes(trimmedQuery)
+        const filteredProducts = allProducts.filter((p: Product) =>
+          p.name?.toLowerCase().includes(trimmedQuery)
         );
-
-        const filteredCategories = allCategories.filter(
-          (c: Category) => c.name?.toLowerCase().includes(trimmedQuery)
+        const filteredCategories = allCategories.filter((c: Category) =>
+          c.name?.toLowerCase().includes(trimmedQuery)
         );
 
         setProducts(filteredProducts);
@@ -85,66 +69,60 @@ function SearchContent() {
         setProducts([]);
         setCategories([]);
       }
-
       setLoading(false);
     };
-
 
     fetchData();
   }, [query]);
 
-  const handleCategoryClick = async (categoryId: string) => {
-    setLoading(true);
+ const handleCategoryClick = async (categoryId: string) => {
+  setLoading(true);
+  const res = await fetch("/api/products", { cache: "no-store" });
+  const allProducts: Product[] = await res.json();
+  const filteredProducts = allProducts.filter(
+    (p) => p.categoryId === categoryId
+  );
 
-    // ✅ Reuse cached product data (optional: could refetch if needed)
-    const res = await fetch("/api/products", { cache: "no-store" });
-    const allProducts: Product[] = await res.json();
-    const filteredProducts = allProducts.filter(
-      (p) => p.categoryId === categoryId
-    );
+  const clickedCategory = categories.find((c) => c.id === categoryId) || null;
+  setProducts(filteredProducts);
+  setActiveCategory(clickedCategory);
+  setLoading(false);
+};
 
-    const clickedCategory = categories.find((c) => c.id === categoryId) || null;
-    setProducts(filteredProducts);
-    setActiveCategory(clickedCategory);
-    setLoading(false);
-  };
-
-  if (loading) return <p className="p-4">Loading results...</p>;
+  if (loading) return <p className="query-loading">Loading results...</p>;
 
   return (
-    <div className="p-6">
-      {/* 🔹 Breadcrumb */}
-      <div className="mb-4">
+    <div className="query-container">
+      {/* 🔹 Header / Breadcrumb */}
+      <div className="query-header">
         {activeCategory ? (
-          <p>
+          <p className="query-breadcrumb">
             Showing products in category:{" "}
-            <span className="font-semibold">{activeCategory.name}</span>
+            <span className="query-breadcrumb-active">{activeCategory.name}</span>
             <button
               onClick={() => {
                 setActiveCategory(null);
                 router.push(`/search?q=${query}`);
               }}
-              className="text-blue-500 underline ml-2"
+              className="query-clear-btn"
             >
               Clear
             </button>
           </p>
         ) : (
-          <h1 className="text-2xl font-bold">
-            Search results for: “{query}”
-          </h1>
+          <h1 className="query-title">Search results for: “{query}”</h1>
         )}
       </div>
 
       {/* 🔹 Categories */}
       {!activeCategory && categories.length > 0 && (
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold mb-2">Matching Categories</h2>
-          <ul className="flex gap-4 flex-wrap">
+        <div className="query-category-section">
+          <h2 className="query-subtitle">Matching Categories</h2>
+          <ul className="query-category-list">
             {categories.map((cat) => (
               <li
                 key={cat.id}
-                className="border p-4 rounded-md bg-gray-100 cursor-pointer hover:bg-gray-200"
+                className="query-category-item"
                 onClick={() => handleCategoryClick(cat.id)}
               >
                 {cat.name}
@@ -156,41 +134,38 @@ function SearchContent() {
 
       {/* 🔹 Products */}
       {products.length > 0 ? (
-        <div>
-          <h2 className="text-xl font-semibold mb-2">
+        <div className="query-product-section">
+          <h2 className="query-subtitle">
             {activeCategory
               ? `Products in ${activeCategory.name}`
               : "Matching Products"}
           </h2>
-          <ul className="flex gap-6 flex-wrap">
+          <ul className="query-product-list">
             {products.map((product) => (
-              <li
-                key={product.id}
-                className="border p-4 rounded-md flex flex-col items-center"
-                style={{ width: "250px" }}
-              >
+              <li key={product.id} className="query-product-card">
                 <img
                   src={product.image1}
                   alt={product.name}
-                  width={200}
-                  height={200}
+                  className="query-product-image"
                 />
-                <p className="font-semibold mt-2">{product.name}</p>
-                <p>SKU: {product.sku}</p>
-                <p>₦{product.bottlePrice.toLocaleString()} (Bottle)</p>
-                <p>₦{product.cartonPrice.toLocaleString()} (Carton)</p>
+                <p className="query-product-name">{product.name}</p>
+                <p className="query-product-sku">SKU: {product.sku}</p>
+                <p className="query-product-price">
+                  ₦{product.bottlePrice.toLocaleString()} (Bottle)
+                </p>
+                <p className="query-product-price">
+                  ₦{product.cartonPrice.toLocaleString()} (Carton)
+                </p>
 
                 <Link href={`/products/${product.id}`}>
-                  <button className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
-                    Buy / Details
-                  </button>
+                  <button className="query-btn">Buy / Details</button>
                 </Link>
               </li>
             ))}
           </ul>
         </div>
       ) : (
-        <p>No products found.</p>
+        <p className="query-empty">No products found.</p>
       )}
     </div>
   );
@@ -198,7 +173,7 @@ function SearchContent() {
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={<p className="p-6">Loading search results...</p>}>
+    <Suspense fallback={<p className="query-loading">Loading search results...</p>}>
       <SearchContent />
     </Suspense>
   );
