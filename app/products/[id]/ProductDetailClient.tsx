@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useCart } from "@/app/context/CartContext";
 import Swal from "sweetalert2";
+import Link from "next/link";
 
 
 interface ProductDetailClientProps {
@@ -27,6 +28,32 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   const { addToCart } = useCart();
   const [purchaseType, setPurchaseType] = useState<"bottle" | "carton" | "">("");
   const [categories, setCategories] = useState<any[]>([]);
+  const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
+
+   useEffect(() => {
+  const fetchRelatedProducts = async () => {
+    try {
+      const firstCategory = product.categories?.[0];
+      if (!firstCategory?.id) return;
+
+      const res = await fetch(`/api/products?categoryId=${firstCategory.id}`);
+      const data = await res.json();
+
+      const filtered = data.filter((p: any) => p.id !== product.id);
+
+      const shuffled = filtered.sort(() => 0.5 - Math.random());
+
+      const limited = shuffled.slice(0, 6);
+
+      setRelatedProducts(limited);
+    } catch (error) {
+      console.error("Error fetching related products:", error);
+    }
+  };
+
+  fetchRelatedProducts();
+}, [product]);
+
 
   const handleAddToCart = () => {
     if (!purchaseType) {
@@ -175,25 +202,26 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
           <section className="related-products-section">
             <h2 className="section-title">YOU MAY ALSO LIKE</h2>
-            <div className="related-products-grid">
-
-                <div className="related-product-card">
-                  <div className="related-product-image-container">
-                    {/* <img
-                      src=""
-                      alt=""
-                      className="related-product-image"
-                    /> */}
-                  </div>
-                  <h3 className="related-product-name">
-                    Related Name
-                  </h3>
-                  <p className="related-product-price">
-                    Price
-                  </p>
-                </div>
-        
-            </div>
+            
+          <div className="related-products-grid">
+    {relatedProducts.length > 0 ? (
+      relatedProducts.map((related) => (
+        <div key={related.id} className="related-product-card">
+          <img
+            src={related.image1 || "/placeholder.png"}
+            alt={related.name}
+            className="related-product-image"
+          />
+          <h3 className="related-product-name">{related.name}</h3>
+          <p className="related-product-price">
+            ₦{related.bottlePrice?.toLocaleString() ?? 0}
+          </p>
+        </div>
+      ))
+    ) : (
+      <p>No related products found.</p>
+    )}
+  </div>
           </section>
         </main>
 
