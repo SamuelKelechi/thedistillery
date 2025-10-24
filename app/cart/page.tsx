@@ -124,7 +124,7 @@ export default function CartPage() {
         <div>
           <button
               onClick={clearCart}
-              className="mt-4 px-4 py-2 bg-gray-800 text-white rounded"
+              style={{padding:'3px'}}
             >
               Clear Cart
             </button>

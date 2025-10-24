@@ -698,6 +698,8 @@ body {
 }
 }
 
+/* Product Details Styling */
+
 .details-main-content {
   max-width: 1400px;
   margin: 0 auto;
@@ -741,6 +743,11 @@ body {
   height: 60%;
   max-height: 500px;
   object-fit: contain;
+}
+.product-out-of-stock {
+  color: #ff4444;
+  font-weight: bold;
+  margin-top: 8px;
 }
 
 .thumbnail-container {
@@ -912,6 +919,7 @@ body {
   flex-direction: column;
   transition: transform 0.2s;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .related-product-card:hover {

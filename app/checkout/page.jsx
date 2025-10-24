@@ -323,8 +323,8 @@ export default function CheckoutPage() {
 
             {cart.length > 0 ? (
               cart.map((item) => (
-                <div key={item.id} className="new-order-row">
-                  <p>{item.name} ({item.purchaseType}) × {item.quantity}</p>
+                <div key={item.id} className="new-order-row" style={{border:'1px solid lightgrey', marginTop:'5px'}}>
+                  <p style={{width:'75%'}}>{item.name} ({item.purchaseType}) × {item.quantity}</p>
                   <p>₦{(item.price * item.quantity).toLocaleString()}</p>
                 </div>
               ))

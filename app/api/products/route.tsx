@@ -4,7 +4,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // Create product
+    // Create product (default inStock = true)
     const product = await prisma.product.create({
       data: {
         name: body.name,
@@ -18,6 +18,7 @@ export async function POST(req: Request) {
         sku: body.sku,
         alcVol: body.alcVol,
         bottlesPerCarton: parseInt(body.bottlesPerCarton) || 0,
+        inStock: true, // ✅ ensure product is in stock by default
       },
     });
 
@@ -52,15 +53,15 @@ export async function GET() {
     const products = await prisma.product.findMany({
       include: {
         categories: {
-          include: {
-            category: true,
-          },
+          include: { category: true },
         },
       },
     });
 
     const formatted = products.map((p) => ({
       ...p,
+      // Force inStock to be Boolean (default false)
+      inStock: p.inStock ?? false,
       categoryNames: p.categories.map((c) => c.category.name),
     }));
 

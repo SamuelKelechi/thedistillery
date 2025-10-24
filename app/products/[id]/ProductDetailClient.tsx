@@ -21,6 +21,7 @@ interface ProductDetailClientProps {
     bottlesPerCarton: number;
     alcVol: string;
     categories: { id: string; name: string }[];
+    inStock: boolean;
   };
 };
 
@@ -55,43 +56,52 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 }, [product]);
 
 
-  const handleAddToCart = () => {
-    if (!purchaseType) {
-       Swal.fire({
+ const handleAddToCart = () => {
+  if (!product.inStock) {
+    Swal.fire({
+      icon: "warning",
+      title: "Out of Stock",
+      text: "Sorry, this product is currently out of stock.",
+      confirmButtonColor: "#063A47",
+    });
+    return;
+  }
+
+  if (!purchaseType) {
+    Swal.fire({
       icon: "warning",
       title: "Select an Option",
       text: "Please select Bottle or Carton before adding to cart.",
       confirmButtonColor: "#063A47",
     });
-      return;
-    }
+    return;
+  }
 
-    addToCart({
-      id: product.id,
-      name: product.name,
-      price:
+  addToCart({
+    id: product.id,
+    name: product.name,
+    price:
       purchaseType === "carton"
-      ? product.cartonPrice ?? 0
-      : product.bottlePrice ?? 0,
-      quantity: 1,
-      sku: product.sku ?? "N/A",
-      image1: product.image1 ?? "",
-      purchaseType,
-      bottlesPerCarton:
-      purchaseType === "carton"
-      ? product.bottlesPerCarton ?? 0
-      : 1,
-      alcVol: product.alcVol ?? "",
-    });
+        ? product.cartonPrice ?? 0
+        : product.bottlePrice ?? 0,
+    quantity: 1,
+    sku: product.sku ?? "N/A",
+    image1: product.image1 ?? "",
+    purchaseType,
+    bottlesPerCarton:
+      purchaseType === "carton" ? product.bottlesPerCarton ?? 0 : 1,
+    alcVol: product.alcVol ?? "",
+  });
 
-    Swal.fire({
+  Swal.fire({
     icon: "success",
     title: "Added to Cart!",
     text: `${product.name} has been added to your cart.`,
     showConfirmButton: false,
     timer: 1800,
   });
-  };
+};
+
 
   useEffect(() => {
       fetch("/api/categories")
@@ -114,6 +124,10 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                   className="product-image"
                 />
               )}
+              {!product.inStock && (
+                <p className="product-out-of-stock">⚠️ Out of Stock</p>
+              )}
+
                 
                 <div className="thumbnail-container">
 
@@ -203,25 +217,27 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
           <section className="related-products-section">
             <h2 className="section-title">YOU MAY ALSO LIKE</h2>
             
-          <div className="related-products-grid">
-    {relatedProducts.length > 0 ? (
-      relatedProducts.map((related) => (
-        <div key={related.id} className="related-product-card">
-          <img
-            src={related.image1 || "/placeholder.png"}
-            alt={related.name}
-            className="related-product-image"
-          />
-          <h3 className="related-product-name">{related.name}</h3>
-          <p className="related-product-price">
-            ₦{related.bottlePrice?.toLocaleString() ?? 0}
-          </p>
-        </div>
-      ))
-    ) : (
-      <p>No related products found.</p>
-    )}
-  </div>
+            <div className="related-products-grid">
+              {relatedProducts.length > 0 ? (
+                relatedProducts.map((related) => (
+                  <div key={related.id} className="related-product-card">
+                    <Link href={`/products/${related.id}`} className="related-product-card">
+                      <img
+                        src={related.image1 || "/placeholder.png"}
+                        alt={related.name}
+                        className="related-product-image"
+                      />
+                      <h3 className="related-product-name">{related.name}</h3>
+                      <p className="related-product-price">
+                        ₦{related.bottlePrice?.toLocaleString() ?? 0}
+                      </p>
+                    </Link>
+                  </div>
+                ))
+              ) : (
+                <p>No related products found.</p>
+              )}
+            </div>
           </section>
         </main>
 

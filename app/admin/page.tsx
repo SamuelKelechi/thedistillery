@@ -8,6 +8,9 @@ export default function AdminPage() {
   const [items, setItems] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
+  
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   // ✅ Dynamic import of react-select
   const Select = dynamic(
@@ -40,8 +43,6 @@ export default function AdminPage() {
     bottlesPerCarton: "",
   });
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
 
   // ✅ Fetch products
   useEffect(() => {
@@ -327,6 +328,7 @@ const handleDelete = async (id: string) => {
         {/* 🧾 Product List */}
         <div style={{width:'90%', display:'flex', flexDirection:'column', alignItems:'center'}}>
           <h2>Admin Products</h2>
+          <h3>Total Products: {items.length}</h3>
           <br/>
           <ul
             style={{
@@ -375,6 +377,27 @@ const handleDelete = async (id: string) => {
                     marginTop: "10px",
                   }}
                 >
+                  <button
+                    onClick={async () => {
+                      await fetch(`/api/products/${product.id}/stock`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ inStock: !product.inStock }),
+                      });
+                      window.location.reload(); // reload to see update
+                    }}
+                    style={{
+                      background: product.inStock ? "#4CAF50" : "#F44336",
+                      color: "#fff",
+                      padding: "6px 12px",
+                      border: "none",
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {product.inStock ? "Set Out of Stock" : "Set In Stock"}
+                  </button>
+
                   <button onClick={() => handleEdit(product)}>Edit</button>
                   <button onClick={() => handleDelete(product.id)}>
                     Delete
