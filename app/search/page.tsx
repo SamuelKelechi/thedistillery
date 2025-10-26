@@ -30,50 +30,51 @@ function SearchContent() {
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
 
-  useEffect(() => {
-    if (!query) return;
+useEffect(() => {
+  if (!query) return;
 
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const trimmedQuery = query.trim().toLowerCase();
-        if (!trimmedQuery) {
-          setProducts([]);
-          setCategories([]);
-          setLoading(false);
-          return;
-        }
-
-        const [productsRes, categoriesRes] = await Promise.all([
-          fetch("/api/products", { cache: "no-store" }),
-          fetch("/api/categories", { cache: "no-store" }),
-        ]);
-
-        if (!productsRes.ok || !categoriesRes.ok) throw new Error("Failed to fetch data");
-
-        const allProducts = await productsRes.json();
-        const allCategories = await categoriesRes.json();
-
-        const filteredProducts = allProducts.filter((p: Product) =>
-          p.name?.toLowerCase().includes(trimmedQuery)
-        );
-        const filteredCategories = allCategories.filter((c: Category) =>
-          c.name?.toLowerCase().includes(trimmedQuery)
-        );
-
-        setProducts(filteredProducts);
-        setCategories(filteredCategories);
-        setActiveCategory(null);
-      } catch (err) {
-        console.error("❌ Search error:", err);
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const trimmedQuery = query.trim().toLowerCase();
+      if (!trimmedQuery) {
         setProducts([]);
         setCategories([]);
+        setLoading(false);
+        return;
       }
-      setLoading(false);
-    };
 
-    fetchData();
-  }, [query]);
+      const [productsRes, categoriesRes] = await Promise.all([
+        fetch("/api/products", { cache: "no-store" }),
+        fetch("/api/categories", { cache: "no-store" }),
+      ]);
+
+      if (!productsRes.ok || !categoriesRes.ok) throw new Error("Failed to fetch data");
+
+      const productsData = await productsRes.json();
+      const allProducts = productsData.products || []; // ✅ access array correctly
+      const allCategories = await categoriesRes.json();
+
+      const filteredProducts = allProducts.filter((p: Product) =>
+        p.name?.toLowerCase().includes(trimmedQuery)
+      );
+      const filteredCategories = allCategories.filter((c: Category) =>
+        c.name?.toLowerCase().includes(trimmedQuery)
+      );
+
+      setProducts(filteredProducts);
+      setCategories(filteredCategories);
+      setActiveCategory(null);
+    } catch (err) {
+      console.error("❌ Search error:", err);
+      setProducts([]);
+      setCategories([]);
+    }
+    setLoading(false);
+  };
+
+  fetchData();
+}, [query]);
 
 const handleCategoryClick = async (categoryId: string) => {
   setLoading(true);
@@ -81,7 +82,8 @@ const handleCategoryClick = async (categoryId: string) => {
     console.log("🟢 Category Clicked:", categoryId);
 
     const res = await fetch("/api/products", { cache: "no-store" });
-    const allProducts = await res.json();
+    const data = await res.json();
+    const allProducts = data.products || [];
 
     // Log product structure to confirm what’s returned
     console.log("📦 All Products Sample:", allProducts[0]);

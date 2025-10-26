@@ -45,12 +45,15 @@ export default function AdminPage() {
 
 
   // ✅ Fetch products
-  useEffect(() => {
-    fetch("/api/products")
-      .then((res) => res.json())
-      .then(setItems)
-      .catch((err) => console.error("Error fetching products:", err));
-  }, []);
+ useEffect(() => {
+  fetch("/api/products")
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("Fetched products:", data); // 👀 See what structure you get
+      setItems(Array.isArray(data) ? data : data.products || []);
+    })
+    .catch((err) => console.error("Error fetching products:", err));
+}, []);
 
   // ✅ Fetch categories
   useEffect(() => {
@@ -209,11 +212,10 @@ const handleDelete = async (id: string) => {
         {/* 📝 Add / Edit Form */}
         <form
           onSubmit={handleSubmit}
-          className="space-y-4 p-4"
           style={{
             display: "flex",
             flexDirection: "column",
-            width: "500px",
+            width: "350px",
             gap: "8px",
             marginBottom: "2rem",
           }}
