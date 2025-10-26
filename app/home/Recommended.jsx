@@ -9,21 +9,24 @@ const Recommended = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchDrinks = async () => {
-      try {
-        const res = await fetch("/api/products");
-        const data = await res.json();
+  const fetchDrinks = async () => {
+    try {
+      const res = await fetch("/api/products?limit=100"); // fetch more products
+      const data = await res.json();
 
-        const random12 = data.sort(() => 0.5 - Math.random()).slice(0, 12);
-        setDrinks(random12);
-      } catch (err) {
-        console.error("Error fetching drinks:", err);
-      } finally {
-        setLoading(false); // 🆕 hide skeleton after load
-      }
-    };
+      // make sure we’re using the products array
+      const list = Array.isArray(data.products) ? data.products : [];
+      const random12 = list.sort(() => 0.5 - Math.random()).slice(0, 12);
 
-    fetchDrinks();
+      setDrinks(random12);
+    } catch (err) {
+      console.error("Error fetching drinks:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchDrinks();
   }, []);
 
   return (
@@ -31,7 +34,7 @@ const Recommended = () => {
       <h1 className="recommended_header">Recommended Drinks</h1>
       <div className="card_holder">
         {loading
-          ? // 🆕 Show skeleton placeholders while loading
+          ?
             Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)
           : drinks.map((drink) => (
               <RecommendedCard

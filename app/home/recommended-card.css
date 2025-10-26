@@ -3,20 +3,21 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  align-items: left;
+  align-items: center;
   padding: 12px;
 }
 .recommendedCard_img {
   width: 100%;
   height: 250px;
-  /* background: antiquewhite; */
   border-radius: 20px;
   background-repeat: no-repeat;
   background-size: contain;
+  background-position: center;
 }
 
 .recommendedCard_text {
   font-family: sans-serif;
+  text-align: center;
 }
 
 .recommendedCard_btn {

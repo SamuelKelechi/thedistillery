@@ -30,6 +30,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   const [purchaseType, setPurchaseType] = useState<"bottle" | "carton" | "">("");
   const [categories, setCategories] = useState<any[]>([]);
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
+  const [mainImage, setMainImage] = useState(product.image1);
 
    useEffect(() => {
   const fetchRelatedProducts = async () => {
@@ -37,13 +38,13 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
       const firstCategory = product.categories?.[0];
       if (!firstCategory?.id) return;
 
-      const res = await fetch(`/api/products?categoryId=${firstCategory.id}`);
+      const res = await fetch(`/api/products?categoryId=${firstCategory.id}&limit=6`);
       const data = await res.json();
 
-      const filtered = data.filter((p: any) => p.id !== product.id);
+      const list = Array.isArray(data.products) ? data.products : [];
 
+      const filtered = list.filter((p: any) => p.id !== product.id);
       const shuffled = filtered.sort(() => 0.5 - Math.random());
-
       const limited = shuffled.slice(0, 6);
 
       setRelatedProducts(limited);
@@ -54,6 +55,8 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
   fetchRelatedProducts();
 }, [product]);
+
+
 
 
  const handleAddToCart = () => {
@@ -119,7 +122,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               <>
               {product.image1 && (
                  <img
-                  src={product.image1}
+                  src={mainImage}
                   alt=""
                   className="product-image"
                 />
@@ -127,32 +130,22 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               {!product.inStock && (
                 <p className="product-out-of-stock">⚠️ Out of Stock</p>
               )}
-
-                
                 <div className="thumbnail-container">
 
                     <div
                       className="thumbnail-wrapper" 
                     >
-                      {product.image2 && (
-                        <img
-                        src={product.image2 || "/placeholder.png"}
-                        alt=""
-                        className="thumbnail-image"
-                      />
-                      )}
-                    </div>
-
-                    <div
-                      className="thumbnail-wrapper" 
-                    >
-                       {product.image3 && (
-                        <img
-                        src={product.image3 || "/placeholder.png"}
-                        alt=""
-                        className="thumbnail-image"
-                      />
-                      )}
+                     {[product.image1, product.image2, product.image3]
+                  .filter(Boolean)
+                  .map((img, i) => (
+                    <img
+                      key={i}
+                      src={img}
+                      alt=""
+                      className="thumbnail-wrapper"
+                      onClick={() => setMainImage(img)}
+                  />
+                ))}
                     </div>
 
                 </div>
@@ -238,6 +231,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                 <p>No related products found.</p>
               )}
             </div>
+
           </section>
         </main>
 

@@ -4,7 +4,6 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // Create product (default inStock = true)
     const product = await prisma.product.create({
       data: {
         name: body.name,
@@ -18,11 +17,10 @@ export async function POST(req: Request) {
         sku: body.sku,
         alcVol: body.alcVol,
         bottlesPerCarton: parseInt(body.bottlesPerCarton) || 0,
-        inStock: true, // ✅ ensure product is in stock by default
+        inStock: true,
       },
     });
 
-    // If categories were selected, link them
     if (Array.isArray(body.categoryIds) && body.categoryIds.length > 0) {
       await Promise.all(
         body.categoryIds.map(async (catId: string) => {
@@ -48,9 +46,30 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const categoryId = searchParams.get("categoryId"); // 👈 new
+    const skip = (page - 1) * limit;
+
+    // Filter by category if provided
+    const where = categoryId
+      ? {
+          categories: {
+            some: { categoryId },
+          },
+        }
+      : {};
+
+    const total = await prisma.product.count({ where });
+
     const products = await prisma.product.findMany({
+      where,
+      skip,
+      take: limit,
+      orderBy: { createdAt: "desc" },
       include: {
         categories: {
           include: { category: true },
@@ -60,17 +79,21 @@ export async function GET() {
 
     const formatted = products.map((p) => ({
       ...p,
-      // Force inStock to be Boolean (default false)
       inStock: p.inStock ?? false,
       categoryNames: p.categories.map((c) => c.category.name),
     }));
 
-    return new Response(JSON.stringify(formatted), { status: 200 });
+    return new Response(
+      JSON.stringify({
+        products: formatted,
+        total,
+        page,
+        pages: Math.ceil(total / limit),
+      }),
+      { status: 200 }
+    );
   } catch (error: any) {
     console.error("❌ Error fetching products:", error);
-    return new Response(
-      JSON.stringify({ success: false, error: error.message }),
-      { status: 500 }
-    );
+    return new Response(JSON.stringify({ success: false, error: error.message }), { status: 500 });
   }
 }

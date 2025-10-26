@@ -8,6 +8,8 @@ import { useRouter, usePathname } from "next/navigation";
 import "./header.css";
 import { IoIosSearch, IoMdArrowDropdown, IoMdMenu } from "react-icons/io";
 import { LiaTimesSolid } from "react-icons/lia";
+import { MdOutlineShoppingCart } from "react-icons/md";
+
 
 export default function Header() {
   const [toggle, setToggle] = useState(false); // mobile menu
@@ -133,8 +135,18 @@ export default function Header() {
           </div>
 
           {/* Mobile menu toggle */}
-          <div className="mobile-menue" onClick={handleToggle}>
-            {!toggle && <IoMdMenu size={40} />}
+          <div className="mobile-header-cart-menu-hold">
+            
+            <div className="mobile-header-cart">
+              <Link href="/cart" style={{display:"flex", alignItems:'center', textDecoration:'none', color:'inherit'}}>
+                <MdOutlineShoppingCart className="cart-icons" />
+                <span className="cart-count">{totalItems}</span>
+              </Link>
+            </div>
+
+            <div className="mobile-menue" onClick={handleToggle}>
+              {!toggle && <IoMdMenu size={40} />}
+            </div>
           </div>
         </div>
       </header>
@@ -147,13 +159,10 @@ export default function Header() {
 
         <div className="top-item-holder" onClick={handleToggle}>
           <Link href="/cart" className="cart-mobile-icon">
-            <ShoppingCart color="white"/>
-
-            {mounted && totalItems > 0 && (
-              <span className="cart-badge">
-                {totalItems}
-              </span>
-            )}
+            <div className="mobile-header-cart">
+              <MdOutlineShoppingCart color="white" size={28} className="cart-icons" />
+              <span className="cart-count">{totalItems}</span>
+            </div>
           </Link>
         </div>
 
