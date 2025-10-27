@@ -1,7 +1,7 @@
 import './footer.css'
 import { FaLocationDot, FaPhone, FaFacebookF, FaInstagram } from "react-icons/fa6";
 import { MdEmail } from "react-icons/md";
-
+import Link from "next/link";
 const Footer = () => {
     return (
         <>
@@ -25,14 +25,14 @@ const Footer = () => {
                 </div>
                 <div className='footer-socials'>
                     <h3>SOCIAL NETWORKS</h3>
-                    <span><FaFacebookF color='#edbd43'/> Thedistillery.ng</span>
-                    <span><FaInstagram color='#edbd43'/> thedistillery.ng</span>
+                   <Link href='https://web.facebook.com/people/thedistilleryng/100087927305461/' target='blank' style={{textDecoration:'none', color:'inherit'}}> <span><FaFacebookF color='#edbd43'/> Thedistillery.ng</span></Link>
+                    <Link href='https://www.instagram.com/thedistillery.ng?igshid=YmMyMTA2M2Y%3D' target='blank' style={{textDecoration:'none', color:'inherit'}}> <span><FaInstagram color='#edbd43'/> thedistillery.ng</span></Link>
                 </div>
                 <div className='footer-quicklinks'>
                     <h3>QUICK LINKS</h3>
-                    <span><a>Our Products</a></span>
-                    <span><a>About Us</a></span>
-                    <span><a>Contact Us</a></span>
+                    <Link href='/products' style={{textDecoration:'none', color:'inherit'}}><span>Our Products</span></Link>
+                    <Link href='/about' style={{textDecoration:'none', color:'inherit'}}><span>About Us</span></Link>
+                    <Link href='/contact' style={{textDecoration:'none', color:'inherit'}}><span>Contact Us</span></Link>
                 </div>
             </div>
         </div>

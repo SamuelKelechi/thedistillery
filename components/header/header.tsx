@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/app/context/CartContext";
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -161,7 +160,7 @@ export default function Header() {
           <Link href="/cart" className="cart-mobile-icon">
             <div className="mobile-header-cart">
               <MdOutlineShoppingCart color="white" size={28} className="cart-icons" />
-              <span className="cart-count">{totalItems}</span>
+              <span className="cart-count" style={{border:'1px solid whitesmoke'}}>{totalItems}</span>
             </div>
           </Link>
         </div>
