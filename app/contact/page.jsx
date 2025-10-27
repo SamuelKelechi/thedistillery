@@ -57,7 +57,7 @@ const ContactPage = () => {
                   <div className="contact-info-content">
                     <h4 className="contact-info-title">Address</h4>
                     <p className="contact-info-detail">
-                      The Distilery Plaza, Call Park, Trade Fair, Lagos
+                      The Distillery Plaza, Call Park, Trade Fair Ojo, Lagos
                     </p>
                   </div>
                 </div>
@@ -105,7 +105,7 @@ const ContactPage = () => {
               <div className="contact-social-section">
                 <h4 className="contact-social-title">Follow Us:</h4>
                 <div className="contact-social-icons">
-                  <a href="#" className="contact-social-icon">
+                  <a href="https://web.facebook.com/people/thedistilleryng/100087927305461/" target="blank" className="contact-social-icon">
                     <svg width="10" height="18" viewBox="0 0 10 18" fill="none">
                       <path
                         d="M6.5 6V4C6.5 3.17157 7.17157 2.5 8 2.5H9V0H6.5C4.84315 0 3.5 1.34315 3.5 3V6H1V9H3.5V18H6.5V9H9L10 6H6.5Z"
@@ -113,7 +113,7 @@ const ContactPage = () => {
                       />
                     </svg>
                   </a>
-                  <a href="#" className="contact-social-icon">
+                  <a href="https://x.com/TheDistill54280?t=-H7JJVMbs-gi6lLq1O57dg&s=09" target="blank" className="contact-social-icon">
                     <svg width="20" height="17" viewBox="0 0 20 17" fill="none">
                       <path
                         d="M19.5 2C18.8 2.3 18.1 2.5 17.3 2.6C18.1 2.1 18.7 1.4 19 0.5C18.3 0.9 17.5 1.2 16.6 1.4C15.9 0.6 14.9 0.1 13.8 0.1C11.5 0.1 9.7 2 9.7 4.3C9.7 4.6 9.7 4.9 9.8 5.2C6.4 5 3.4 3.4 1.4 0.9C1 1.5 0.8 2.1 0.8 2.9C0.8 4.3 1.5 5.5 2.6 6.2C2 6.2 1.4 6 0.9 5.7C0.9 5.7 0.9 5.7 0.9 5.7C0.9 7.7 2.3 9.4 4.1 9.8C3.8 9.9 3.4 9.9 3 9.9C2.7 9.9 2.5 9.9 2.2 9.8C2.7 11.5 4.2 12.7 6 12.7C4.6 13.8 2.9 14.5 1 14.5C0.7 14.5 0.3 14.5 0 14.4C1.8 15.6 4 16.3 6.3 16.3C13.8 16.3 17.9 10 17.9 4.8C17.9 4.6 17.9 4.4 17.9 4.2C18.6 3.7 19.3 3 19.8 2.2L19.5 2Z"
@@ -121,7 +121,7 @@ const ContactPage = () => {
                       />
                     </svg>
                   </a>
-                  <a href="#" className="contact-social-icon">
+                  <a href="https://www.instagram.com/thedistillery.ng?igshid=YmMyMTA2M2Y%3D" target="blank" className="contact-social-icon">
                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                       <circle cx="9" cy="9" r="3.5" fill="white" />
                       <path
@@ -132,14 +132,14 @@ const ContactPage = () => {
                       />
                     </svg>
                   </a>
-                  <a href="#" className="contact-social-icon">
+                  {/* <a href="#" className="contact-social-icon">
                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                       <path
                         d="M9 0C4.02944 0 0 4.02944 0 9C0 13.9706 4.02944 18 9 18C13.9706 18 18 13.9706 18 9C18 4.02944 13.9706 0 9 0ZM13.5 7.2C13.5 7.3 13.5 7.45 13.5 7.55C13.5 10.55 11.2 14 7.05 14C5.85 14 4.75 13.65 3.8 13.05C3.95 13.05 4.15 13.1 4.3 13.1C5.3 13.1 6.2 12.75 6.95 12.15C6 12.15 5.2 11.5 4.9 10.65C5.05 10.7 5.2 10.7 5.35 10.7C5.55 10.7 5.75 10.65 5.9 10.6C4.9 10.4 4.15 9.55 4.15 8.5V8.5C4.45 8.65 4.8 8.75 5.15 8.75C4.55 8.35 4.15 7.7 4.15 6.95C4.15 6.55 4.25 6.2 4.45 5.9C5.5 7.15 7.05 7.95 8.8 8.05C8.75 7.9 8.75 7.7 8.75 7.55C8.75 6.35 9.7 5.4 10.9 5.4C11.5 5.4 12.05 5.65 12.45 6.05C12.95 5.95 13.4 5.75 13.8 5.5C13.65 6.05 13.3 6.5 12.85 6.8C13.3 6.75 13.7 6.65 14.1 6.45C13.8 6.9 13.45 7.3 13.05 7.65C13.05 7.5 13.5 7.2 13.5 7.2Z"
                         fill="white"
                       />
                     </svg>
-                  </a>
+                  </a> */}
                 </div>
               </div>
             </div>
