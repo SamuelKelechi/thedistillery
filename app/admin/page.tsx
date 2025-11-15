@@ -49,8 +49,7 @@ export default function AdminPage() {
   fetch("/api/products")
     .then((res) => res.json())
     .then((data) => {
-      console.log("Fetched products:", data); // 👀 See what structure you get
-      setItems(Array.isArray(data) ? data : data.products || []);
+      setItems(data.products || []);
     })
     .catch((err) => console.error("Error fetching products:", err));
 }, []);
@@ -152,7 +151,7 @@ const handleDelete = async (id: string) => {
     if (res.ok) {
       alert(editingId ? "✅ Product updated!" : "✅ Product added!");
       const updated = await fetch("/api/products").then((r) => r.json());
-      setItems(updated);
+      setItems(updated.products || []);
       setEditingId(null);
       resetForm();
     } else {
