@@ -1264,6 +1264,16 @@ body {
   font-size: 25px;
 }
 
+@media screen and (max-width: 786px){
+  .product-category-details-card{
+    width: 150px;
+  }
+.product-category-details-img{
+    height: 150px;
+  }
+
+}
+
 
 /* CONTACT PAGE STYLING */
 .contact-page {

@@ -7,20 +7,29 @@ import "./heroPage.css"
 const HeroPage = () => {
     const carousel = [
         {
-            background: "/dist1.jpg",
-            // title: `We Are <br> The Distillery`,
-            // text: "Nigeria's best online distributor of Vodka, Spirits, Wines, Rum and Gin. We deliver premium liquor fast!"
-        },
+            background: "/dist1.jpeg",
+       },
         {
-            background: "dist2.jpg",
-            // title: "Martel XO Available",
-            // text: "Premium cognac for the discerning taste. Limited stock available."
-        },
+            background: "/dist2.jpg",
+       },
         {
-            background: "dist3.jpg",
-            // title: "Martel XXO Available",
-            // text: "Ultra-premium cognac experience. Order now for exclusive delivery."
-        }
+            background: "/dist3.jpg",
+       },
+        {
+            background: "/dist4.jpg",
+       },
+        { 
+            background: "/dist5.jpg",
+       },
+        {
+            background: "/dist6.jpg",
+       },
+        {
+            background: "/dist7.jpg",
+       },
+        {
+            background: "/dist8.jpg",
+       },
     ]
 
     const [currentIndex, setCurrentIndex] = useState(0)

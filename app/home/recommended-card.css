@@ -37,5 +37,9 @@
 @media screen and (max-width: 768px){
   .recommendedCard {
     align-items: center;
+    width: 150px;
+  }
+  .recommendedCard_img {
+    height: 100px;
   }
 }
