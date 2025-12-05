@@ -8,7 +8,9 @@ export default function AdminPage() {
   const [items, setItems] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
-  
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+  const limit = 20;
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
@@ -46,13 +48,14 @@ export default function AdminPage() {
 
   // ✅ Fetch products
  useEffect(() => {
-  fetch("/api/products")
+  fetch(`/api/products?page=${page}&limit=${limit}`)
     .then((res) => res.json())
     .then((data) => {
       setItems(data.products || []);
+      setPages(data.pages || 1);
     })
     .catch((err) => console.error("Error fetching products:", err));
-}, []);
+}, [page]);
 
   // ✅ Fetch categories
   useEffect(() => {
@@ -95,7 +98,6 @@ const handleDelete = async (id: string) => {
     alert("⚠️ Error deleting product");
   }
 };
-
 
 
   // ✅ Edit product
@@ -149,11 +151,17 @@ const handleDelete = async (id: string) => {
     });
 
     if (res.ok) {
-      alert(editingId ? "✅ Product updated!" : "✅ Product added!");
-      const updated = await fetch("/api/products").then((r) => r.json());
-      setItems(updated.products || []);
-      setEditingId(null);
-      resetForm();
+  alert(editingId ? "✅ Product updated!" : "✅ Product added!");
+
+  // 🔥 Fetch with page + limit so pagination stays correct
+  const updated = await fetch(`/api/products?page=${page}&limit=${limit}`)
+    .then((r) => r.json());
+
+  setItems(updated.products || []);
+  setPages(updated.pages || 1);
+
+  setEditingId(null);
+  resetForm();
     } else {
       alert("❌ Failed to save product");
     }
@@ -331,6 +339,8 @@ const handleDelete = async (id: string) => {
           <h2>Admin Products</h2>
           <h3>Total Products: {items.length}</h3>
           <br/>
+          <input placeholder="Filter Product"/>
+          <br/>
           <ul
             style={{
               display: "flex",
@@ -385,7 +395,7 @@ const handleDelete = async (id: string) => {
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ inStock: !product.inStock }),
                       });
-                      window.location.reload(); // reload to see update
+                      window.location.reload();
                     }}
                     style={{
                       background: product.inStock ? "#4CAF50" : "#F44336",
@@ -407,6 +417,42 @@ const handleDelete = async (id: string) => {
               </li>
             ))}
           </ul>
+          {/* PAGINATION */}
+          <div style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
+            <button
+              disabled={page === 1}
+              onClick={() => setPage(page - 1)}
+              style={{ padding: "8px 14px", cursor: page === 1 ? "not-allowed" : "pointer" }}
+            >
+              ⬅ Prev
+            </button>
+
+            {/* Numbered pages */}
+            {Array.from({ length: pages }, (_, i) => i + 1).map((p) => (
+              <button
+                key={p}
+                onClick={() => setPage(p)}
+                style={{
+                  padding: "8px 14px",
+                  background: p === page ? "#000" : "#ddd",
+                  color: p === page ? "#fff" : "#000",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                }}
+              >
+                {p}
+              </button>
+            ))}
+
+            <button
+              disabled={page === pages}
+              onClick={() => setPage(page + 1)}
+              style={{ padding: "8px 14px", cursor: page === pages ? "not-allowed" : "pointer" }}
+            >
+              Next ➡
+            </button>
+          </div>
+
         </div>
       </div>
     </>

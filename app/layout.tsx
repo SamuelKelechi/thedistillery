@@ -8,6 +8,16 @@ import Footer from '@/components/footer/footer';
 import { FaWhatsapp } from "react-icons/fa";
 import AgeVerification from "@/components/AgeVerification";
 
+export const metadata = {
+  title: "The Distillery - Premium Drinks Store",
+  description: "Shop premium and affordable drinks delivered fast.",
+  icons: {
+    icon: "/logo2.png",
+    shortcut: "/logo2.png",
+    apple: "/logo2.png",
+  },
+};
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
@@ -18,7 +28,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           {children}
           <Footer />
 
-           <div className="floating-icons">
+          <div className="floating-icons">
             <FloatingCartIcon />
             <a
               href="https://wa.me/2349061823111"
