@@ -10,25 +10,22 @@ const HeroPage = () => {
             background: "/dist1.jpeg",
        },
         {
-            background: "/dist2.jpg",
+            background: "/dist2.jpeg",
        },
         {
-            background: "/dist3.jpg",
+            background: "/dist3.jpeg",
        },
         {
-            background: "/dist4.jpg",
+            background: "/dist4.jpeg",
        },
         { 
-            background: "/dist5.jpg",
+            background: "/dist5.jpeg",
        },
         {
-            background: "/dist6.jpg",
+            background: "/dist6.jpeg",
        },
         {
-            background: "/dist7.jpg",
-       },
-        {
-            background: "/dist8.jpg",
+            background: "/dist7.jpeg",
        },
     ]
 
